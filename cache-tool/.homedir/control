@@ -1,0 +1,14 @@
+package: cache-tool
+priority: critical
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: 
+standards-version: 1
+description: Cache-Tool base package.
+ This package provides ~/.homedir/cache/00init.sh -- a shell script to allow
+ fetching of certain files from the internet automatically.
+ .
+ It's very useful for things that update regularly such as jslint.
+dirs:
+ .homedir/cache
+mkdirs:
+ .homedir/cache

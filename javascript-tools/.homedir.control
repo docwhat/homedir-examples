@@ -1,6 +1,7 @@
 package: javascript-tools
 priority: normal
 maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: cache-tool
 standards-version: 1
 description: JavaScript Tools and Utilities
 
