@@ -1,0 +1,37 @@
+Here are some handy hints for using emacs:
+
+* General Help
+  I found this site to be very helpful.  I think it comes in emacs,
+  but the HTML version is great to bounce around in quickly.
+  http://www.delorie.com/gnu/docs/emacs/emacs.html
+** Kill & Yank - Cut & Paste
+*** C-y
+    Yank last killed text (yank). 
+*** M-y
+    Replace text just yanked with an earlier batch of killed text (yank-pop). 
+*** M-w
+    Save region as last killed text without actually killing it (kill-ring-save). 
+*** C-M-w
+    Append next kill to last batch of killed text (append-next-kill).
+
+** Search And Replace
+*** Temporarily exit query-replace mode with C-r and the resume with M-C-c
+
+* Programming
+** Make function and variable names easier to read: M-x glass-mode
+** Parenthesis:
+    C-M-f C-M-p (forward and backward)
+    C-M-t (transpose, ala C-t)
+** Guess what you're typing
+    M-/
+** Help building a regular expression
+    M-x re-builder
+** Spell Check
+   Flyspell mode can make spelling much easier
+   M-TAB auto-replaces a misspelled word under the cursor
+   M-$ works everywere: spell check the word under the cursor
+
+
+Local Variables:
+mode: outline
+End:

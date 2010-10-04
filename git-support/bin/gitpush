@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -eu
+
+branch=$(git rev-parse --symbolic-full-name HEAD | cut -f3 -d/)
+remote=$(git config branch.${branch}.remote || :)
+merge=$(git config branch.${branch}.merge || :)
+merge=${merge/#refs\/heads\//}
+
+if [ -z ${remote} ]; then
+    echo "** This isn't a mirrored branch **"
+    exit 1
+fi
+
+git push "${remote}" "${merge}"
+
+# EOF

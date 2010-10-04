@@ -1,0 +1,10 @@
+package: vim-full
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: vim-base
+standards-version: 1
+description: More intensive vim configuration files
+
+dirs:
+ .vim
+ .vim/plugin

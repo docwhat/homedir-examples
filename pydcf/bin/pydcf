@@ -1,0 +1,82 @@
+#!/usr/bin/python
+
+# Note: Requires python 2.4 or newer, I think.  Maybe 2.3 will work...
+
+# This program is based upon the DCF.py program
+# written by Ewan <ewan_at_mathcode_dot_net> and Chieh Cheng
+# in the camerahacker forums:
+# http://www.camerahacker.com/Forums/DisplayComments.php?file=Digital%20Camera/Sony/using_Sony_digital_camera_as_a_picture_viewer.html
+
+import os
+import sys
+import optparse
+import Image
+
+class Program(object):
+    def __init__(self):
+        parser = optparse.OptionParser(usage="%prog [options] image1 ...")
+        parser.add_option("-f","--format",
+                          default='JPEG',
+                          help="The format to save images as: JPEG or TIFF (default: %default)")
+        parser.add_option("-m", "--media",
+                          default=None,
+                          help="The directory that is the top of the DCF media. (default: %default)")
+  
+        self.options, self.args = parser.parse_args()
+        self.options.format = self.options.format.upper()
+        if self.options.format not in ('JPEG','TIFF'):
+            parser.error("Invalid format: %s" % self.options.format)
+
+        if not self.args:
+            parser.print_help()
+            sys.exit(1)
+
+        # Fix the media directory
+        if not self.options.media:
+            parser.error("You must specify the media directory")
+        self.options.media = os.path.realpath(self.options.media)
+        if not os.path.isdir(self.options.media):
+            parser.error("Invalid directory: %s" % self.options.media)
+
+    def getExt(self):
+        if self.options.format == 'TIFF':
+            return 'TIF'
+        elif self.options.format == 'JPEG':
+            return 'JPG'
+
+    def getNextName(self, directory):
+        "Returns the next available DSC compatible name"
+        template = 'DSCN%04d.' + self.getExt()
+        for i in range(1,9999):
+            name = os.path.join(directory,
+                                template % i)
+            if not os.path.exists(name):
+                return name
+
+    def main(self):
+        # Verify that the directory structure is there.
+        top       = self.options.media
+        dcimdir   = os.path.join(top,'DCIM')
+        pydcfdir  = os.path.join(dcimdir,'100PYDCF')
+        if not os.path.isdir(dcimdir):
+            os.mkdir(dcimdir)
+        if not os.path.isdir(pydcfdir):
+            os.mkdir(pydcfdir)
+
+        # Put the modified images in place
+        for filename in self.args:
+            if not os.path.isfile(filename):
+                print "File does not exist: %s" % filename
+            else:
+                image = Image.open(filename)
+                imagecopy = image.copy().convert('YCbCr')
+                imagecopy.mode = 'YCbCr'
+                imagecopy.save(self.getNextName(pydcfdir),
+                               self.options.format,
+                               quality=100)
+                
+if "__main__" == __name__:
+    program = Program()
+    program.main()
+
+# EOF

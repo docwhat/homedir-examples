@@ -1,0 +1,77 @@
+#!/usr/bin/python
+
+import os, sys, optparse
+
+class NotEBookError(ValueError): pass
+
+def getinfo( fname, debug=False, limit=200 ):
+    "Get the information from a Gutenburg Project file"
+    fd = file(fname,'r')
+    retval = {}
+    is_gutenburg = False
+    attribs = {
+        'Author: ': 'author',
+        'Title: ': 'title',
+        'Language: ': 'language',
+        'Release Date:': 'release',
+        'Character set encoding: ': 'charset',
+        }
+    count = 0
+    for line in fd.readlines():
+        count += 1
+        line = line.strip()
+        for k,v in attribs.items():
+            if line.startswith(k):
+                retval[v] = line[len(k):]
+        if line.startswith('*** START OF THIS PROJECT GUTENBERG EBOOK') and \
+           line.endswith(' ***'):
+            is_gutenburg = True
+        if count >= limit:
+            break
+
+    # Verify everything is there...
+    for v in attribs.values():
+        if v not in retval:
+            is_gutenburg = False
+            break
+
+    if not is_gutenburg:
+        raise NotEBookError("This is not a Project Gutenburg book")
+    return retval
+
+if "__main__" == __name__:
+    parser = optparse.OptionParser(version=0,
+                                   usage="%prog [options] file file file ...")
+    parser.add_option('-d', '--debug', dest='debug',
+                      help="Turn on debugging",
+                      default=False,
+                      action="store_true")
+
+    options, args = parser.parse_args()
+
+    fnames = []
+    for arg in args:
+        fname = os.path.expanduser(os.path.expandvars(arg))
+        if not os.path.exists(fname):
+            print >> sys.stderr, "No such file: %s" % fname
+            parser.print_help()
+            sys.exit(0)
+        else:
+            fnames.append(fname)
+
+    for fname in fnames:
+        try:
+            info = getinfo( fname, debug=options.debug )
+        except NotEBookError:
+            print >> sys.stderr, "Skipping non-ebook %s" % fname
+            continue
+
+        # rename
+        root,ext = os.path.splitext(fname)
+        if ext == '.htm':
+            ext = '.html'
+        info['ext'] = ext
+        new_fname = "%(author)s - %(title)s%(ext)s" % info
+        print 'mv "%s" "%s"' % (fname, new_fname)
+
+# EOF

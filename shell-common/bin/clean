@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ "$1" = "-r" ]; then
+    shift
+    DEPTHARG=""
+else
+    DEPTHARG="-maxdepth 1"
+fi
+
+exec find ${DEPTHARG} \
+  -type f \
+  '(' \
+    -name '*~'   -o \
+    -name '*.bak' -o \
+    -name 'core'  -o \
+    -name '*.pyc' -o \
+    -name '*.pyo' -o \
+    -name '*.pty' -o \
+    -name '*.ptc' -o \
+    -name '#*#'   -o \
+    -name '.#*' \
+  ')' -print0 | xargs -0 rm -vf
+

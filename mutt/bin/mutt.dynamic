@@ -1,0 +1,327 @@
+#!/usr/bin/perl -w
+# Copyright 2000 Christian Holtje <docwhat@gerf.org>
+# $Id: mutt.dynamic,v 2.13 2004/08/10 00:21:21 docwhat Exp $
+$| = 1;
+use strict;
+use Getopt::Long;
+
+use Env qw( HOME );
+
+my ( %config, @folders, @lists, %hooks );
+
+use vars qw ( $debug
+              $rcfile
+              $lists
+              $help
+              );
+
+if( ! &GetOptions( "help|h"		=> \$help,
+                   "rcfile|r=s"		=> \$rcfile,
+                   "lists|l"		=> \$lists,
+                   "debug"		=> \$debug
+                   )
+    )
+{
+    $help = 1;
+}
+
+
+#############
+# Subroutines 
+#############
+
+sub unique_push( \@$ ) {
+    # Doesn't push an element onto the array if
+    # it already exists
+    my($a_ref, $string) = @_;
+    my $found = 0;
+
+    print "   unique_push ( $a_ref, $string )\n" if ( defined $debug );
+
+    foreach my $elem ( @$a_ref ) {
+        if( $elem eq $string ) {
+            $found = 1;
+            last;
+        }
+    }
+    if( ! $found ) {
+        push @$a_ref, $string;
+    }
+}
+
+sub overwrite_push( \@$ ) {
+    # Removes previous occurance if it already exists
+    my($a_ref, $string) = @_;
+    my @new;
+    my $del_count = 0;
+
+    print "   overwrite_push ( $a_ref, $string )\n" if ( defined $debug );
+
+    for( my $i = 0; $i < scalar(@$a_ref); $i++ ) {
+        if( $$a_ref[$i] ne $string ) {
+            push @new, $$a_ref[$i];
+        } else {
+            $del_count++;
+        }
+    }
+    if( scalar(@new) < scalar(@$a_ref) ) {
+        my $j;
+        for( $j = 0; $j < scalar(@new); $j++ ) {
+            $$a_ref[$j] = $new[$j];
+        }
+        delete @$a_ref[ $j .. (scalar(@$a_ref)-1) ];
+    }
+    
+    push @$a_ref, $string;
+}
+
+# Add one folder to our list
+sub addone ( $ )
+{
+    my ( $list ) = @_;
+    print "   addone ( '$list' )\n" if ( defined $debug );
+    my $file = $list;
+    
+    $file =~ s/^=/$config{'MAILDIR'}\//;
+    if ( $file eq "!" or
+         -r $file or
+         $file =~ m/^\{/ )
+    {
+        overwrite_push( @folders, $list );
+        if( $file =~ m!^=(list|com|org|net)/([^/]+)$! ) {
+            $hooks{$file} = "$1.$2";
+        }
+    }
+    
+    if( defined $lists ) {
+        if( $config{'LISTSUB'} ) {
+            eval "\$list =~ " . $config{'LISTSUB'};
+        }
+        if( $list =~ /$config{'LISTREG'}/i ) {
+            overwrite_push( @lists, $1 );
+        }
+    }
+    
+}
+    
+    
+sub addglob ( $$ )
+{
+    my ( $dir, $glob ) = @_;
+    print "   addglob ( '$dir', '$glob' )\n" if ( defined $debug );
+    
+    $dir =~ s|^./|$config{'MAILDIR'}/|;
+    $dir =~ s|^.$|$config{'MAILDIR'}|;
+    $dir =~ s|^=|$config{'MAILDIR'}/|;
+    
+    while ( <$dir/$glob> )
+    {
+        my $file = $_;
+        $file =~ s|^$config{'MAILDIR'}/*|=|;
+        unique_push( @folders, $file );
+        if( $file =~ m!^=(list|com|org|net)/([^/]+)$! ) {
+            $hooks{$file} = "$1.$2";
+        }
+        
+        if( defined $lists ) {
+            if( $config{'LISTSUB'} ) {
+                eval "\$file =~ " . $config{'LISTSUB'};
+            }
+            if( $file =~ /$config{'LISTREG'}/i ) {
+                unique_push( @lists, $1 );
+            }
+        }
+    }
+}
+
+######
+# Main
+######
+
+if ( ! defined $rcfile )
+{
+    $rcfile = "$HOME/.mdrc";
+}
+
+if ( ! -r $rcfile )
+{
+    exit 0;
+    print STDERR " * Can't read rcfile '$rcfile'\n";
+    $help++;
+}
+
+if ( $help ) {
+    print << "EOH";
+mutt.dynamic: Creates a list of mailboxes in a file usable for mutt
+
+Usage: $0 <options>
+
+Options:
+    --help	-h			Help
+    --rcfiles	-r <file>		Uses <file> instead of \$HOME/.mdrc
+    --lists	-l			Adds lists to the muttrc file, too
+
+EOH
+    exit(0);
+}
+
+%config = ( "MAILDIR" => "$HOME/Mail",
+            "OUTFILE" => "$HOME/.mutt/dynamic",
+            "LOCALRC" => "$HOME/.mutt/local",
+            "LISTREG" => "^=(.*)\$",
+            "LISTSUB" => "",
+            "EMAILDOMAIN" => "",
+            "REALNAME" => "",
+	    );
+my $confignames = "(".join('|', sort keys %config).")";
+if ( defined $debug )
+{
+    print " * confignames = $confignames\n";
+}
+
+@folders = ();
+@lists   = ();
+%hooks   = ();
+
+
+open ( RCFILE, "$rcfile" ) or
+    die "Unable to read '$rcfile': $!";
+while ( <RCFILE> )
+{
+    chomp( my $line = $_ );
+    next if ( ( $line =~ /^[\#\s]/ ) or
+              ( length( $line ) == 0 ) );
+    
+    my $one;
+    my $two;
+    if ( $line =~ /^(\S+)\s+(\S.*)\s*$/ )
+    {
+        $one = $1;
+        $two = $2;
+    }
+    else
+    {
+        $one = $line;
+    }
+    
+    if ( defined $debug )
+    {
+        print " * [" . ( length $line ) . "] '$one'";
+        print " '$two'" if ( defined $two );
+        print "\n";
+    }
+    
+    # Is it a configuration option?
+    if ( $one =~ /$confignames/ )
+    {
+        # It's an invalid configuration option! We better die
+        die "Error: '$one' needs a value!\n" unless ( defined $two );
+        # Turn on lists if LISTREG is set.
+        $lists = 1 if( $one eq "LISTREG" );
+        $config{ $one } = eval "\"$two\"";
+        next;
+    }
+    
+    if ( defined $two )
+    {
+        addglob( $one, $two );
+    }
+    else
+    {
+        addone( $one );
+    }
+	
+}
+close RCFILE;
+
+if ( defined $debug )
+{
+    print "\n";
+    foreach my $i ( sort keys %config )
+    {
+        print "$i: '$config{$i}'\n";
+    }
+    
+    print "\n";
+    foreach my $i ( @folders )
+    {
+        print "$i\n";
+    }
+
+    print "\n";
+    foreach my $i ( @lists )
+    {
+        print "$i\n";
+    }
+
+    print "\n";
+    foreach my $key ( sort keys %hooks )
+    {
+        print "$key: $hooks{$key}\n";
+    }
+}
+
+
+# Write out the OUTFILE
+if( $config{'OUTFILE'} =~ /^-+$/ ) {
+    open( OUTFILE, ">&STDOUT") or die "Unable to open stdout: $!";
+} else {
+    open( OUTFILE, ">$config{'OUTFILE'}" ) or
+        die "Unable to (over)write '$config{'OUTFILE'}': $!";
+}
+
+print OUTFILE "# DO NOT EDIT\n";
+print OUTFILE "# Generated by $0 on " . scalar( localtime() ) . "\n\n";
+
+# Read in local config files if they exist
+if( -r $config{'LOCALRC'} ) {
+    open( LOCALRC, "<$config{'LOCALRC'}" ) or
+        die "Unable to read '$config{'LOCALRC'}': $!";
+    print OUTFILE "# LocalRC File: $config{'LOCALRC'}\n";
+    while( <LOCALRC> ) {
+        if( /^[^\#]/ ) {
+            print OUTFILE;
+        }
+    }
+    print OUTFILE "# End LocalRC File\n\n";
+    close( LOCALRC ) or die "Unable to close '$config{'LOCALRC'}': $!";
+}
+
+print OUTFILE "mailboxes";
+foreach my $item ( @folders )
+{
+    print OUTFILE " \\\n";
+    print OUTFILE " $item";
+}
+
+print OUTFILE "\n\n";
+
+if( defined $lists ) {
+    print OUTFILE "lists";
+    foreach my $item ( @lists )
+    {
+        print OUTFILE " \\\n";
+        print OUTFILE " $item";
+    }
+    
+}
+
+print OUTFILE "\n\n";
+
+if( $config{'EMAILDOMAIN'} &&
+    $config{'REALNAME'} ) {
+    print OUTFILE "## Folder Hooks: Begin\n";
+    foreach my $key ( sort keys %hooks )
+    {
+        print OUTFILE "folder-hook $key 'my_hdr From: ".$config{REALNAME}." <".$hooks{$key}."@".$config{EMAILDOMAIN}.">'\n";
+    }
+    print OUTFILE "## Folder Hooks: End\n";
+}
+
+print OUTFILE "\n\n## EOF\n";
+
+close( OUTFILE ) or die "Unable to close '$config{'OUTFILE'}': $!";
+
+exit 0;
+
+

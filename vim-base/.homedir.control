@@ -1,0 +1,16 @@
+package: vim-base
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+standards-version: 1
+description: Base vim configuration
+
+dirs:
+ .vim
+ .vim/after
+ .vim/after/syntax
+ .vim/plugin
+mkdirs:
+ .vim
+ .vim/after
+ .vim/after/syntax
+ .vim/plugin

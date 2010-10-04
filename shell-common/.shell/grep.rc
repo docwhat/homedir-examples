@@ -1,0 +1,27 @@
+# Unset the grep option environment variable. It causes too much
+# trouble. It's only useful for coloring.
+unset GREP_OPTIONS
+
+if grep --color=auto / /etc/fstab >/dev/null 2>&1; then
+   ##Set the grep color
+   # x0	black
+   # x1	red
+   # x2	green
+   # x3	yellow
+   # x4	blue
+   # x5	purple
+   # x6	cyan
+   # x7	white
+   # x3
+   # 3x    forground
+   # 4x    background
+   GREP_COLOR=42
+   export GREP_COLOR
+   # Only use the grep options for color..., it won't screw up
+   # scripts.
+   GREP_OPTIONS="--color=auto"
+   export GREP_OPTIONS
+fi
+
+alias egrep='grep -E'
+alias pgrep='grep -P'

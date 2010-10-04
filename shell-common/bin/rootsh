@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -eu
+
+sudo="env -u DISPLAY -u HISTFILE sudo -H"
+
+if [ -n "$*" ]; then
+    exec ${sudo} "$@"
+else
+    cd /
+    exec ${sudo} -s
+fi
+
+#EOF

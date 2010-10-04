@@ -1,0 +1,155 @@
+#!/usr/bin/perl -w
+$| = 1;
+use strict;
+use Getopt::Long;
+use File::Basename;
+my $Revision = '$Revision: 1.5 $ ';
+my $version = (split( / /, $Revision ))[1];
+
+sub parse ( $ );
+
+# This is to replace the fact we cannot use "my" without
+# preventing GetOptions from setting the variables.
+use vars qw( $help
+             $rename
+             $quiet
+             $verbose
+             $debug
+           );
+$help = 0;
+$help = 1 if( ! &GetOptions( "help"		=> \$help,
+                             "rename"		=> \$rename,
+                             "quiet"		=> \$quiet,
+                             "verbose"		=> \$verbose,
+                             "debug+"		=> \$debug
+                           )
+            );
+
+my @files = @ARGV;
+
+if( defined $quiet and ! $help ) {
+  if( defined $verbose ) {
+    print STDERR " * Okay, explain how to be verbose " .
+      "and quiet at the same time, smarty.\n";
+    $help++;
+  } elsif( ! defined $rename ) {
+    print STDERR "There are faster ways to do nothing.\n";
+    exit 0;
+  }
+}
+
+foreach my $file ( @files ) {
+  if( ! -f $file ) {
+    print STDERR " * Can't find file '$file'.\n";
+    $help++;
+  }
+}
+
+if ( @files < 1 ) {
+  print STDERR " * No z-code files specified!\n";
+  $help++;
+}
+
+if( $help ) {
+  my $name = basename( $0 );
+  print STDERR << "EndOfHelp";
+
+zfir: Z-Code-Data File Information and Rename (v. $version)
+
+Usage:
+     $name [-h] [-r [-q]] [-v] <z-code files>
+
+     -h --help        This help
+     -r --rename      Rename files to add z info in the filename
+     -q --quiet       Rename without making noise
+     -v --verbose     Be loud, print full file paths
+
+EndOfHelp
+  exit (1);
+}
+
+foreach my $file ( @files ) {
+  my $name = basename($file);
+  $name =~ s/\..*$//;
+  if( ! defined $quiet and ! defined $rename ) {
+    if( defined $verbose ) {
+      print $file;
+    } else {
+      printf "%-9s", $name;
+    }
+  }
+  my %info = parse ($file);
+
+  if( ! defined $quiet and ! defined $rename ) {
+    foreach my $i ( keys %info ) {
+      printf "  %s: %-3d", $i, $info{$i};
+    }
+    print "\n";
+  }
+  if( defined $rename ) {
+    my $dir  = dirname($file);
+    my $newname = "$dir/$name.";
+    if( exists $info{'zversion'} ) {
+      $newname .= "z$info{'zversion'}.";
+    }
+    if( exists $info{'release'} ) {
+      $newname .= "r$info{'release'}.";
+    }
+    if( exists $info{'serial'} ) {
+      $newname .= "s$info{'serial'}.";
+    }
+    $newname .= "dat";
+
+    if( ! -e $newname ) {
+      print " $file --> $newname\n" unless ( defined $quiet );
+      rename( $file, $newname ) or
+        die "Unable to rename '$file' to '$newname': $!";
+    }
+  }
+}
+
+
+exit 0;
+###
+### Subroutines below
+
+sub parse ( $ ) {
+  my ( $file ) = @_;
+  my %return;
+  my $buff;
+  my $tmp;
+
+  open( FILE, $file ) or
+    die "Unable to open '$file': $!";
+  if( ! defined read( FILE, $buff, 32 ) ) {
+    die "Error reading '$file': $!";
+  }
+  close( FILE );
+
+  if( length( $buff ) != 32 ) {
+    return( %return );
+  }
+
+  $return{'zversion'} = unpack( "C", $buff );
+  $return{'release'}  = unpack( '@2 n', $buff );
+
+  for( my $i = 18 ; $i < 32 ; $i++ ) {
+    $tmp = unpack( "\@$i a", $buff );
+    last if( ord($tmp) < 33  );
+    $return{'serial'} .= $tmp;
+  }
+
+  if( ($return{'zversion'} >= 3 and $return{'zversion'} <= 6) or
+      $return{'zversion'} == 8 ) {
+    $return{'size'} = unpack( "\@26 n", $buff );
+  }
+  if( $return{'zversion'} == 3 ) {
+    $return{'size'} *= 2;
+  } elsif ( $return{'zversion'} == 4 or $return{'zversion'} == 5 ) {
+    $return{'size'} *= 4;
+  } elsif ( $return{'zversion'} == 6 or $return{'zversion'} == 8 ) {
+    $return{'size'} *= 8;
+  }
+
+  return( %return );
+}

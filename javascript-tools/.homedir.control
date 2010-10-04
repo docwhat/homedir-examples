@@ -1,0 +1,10 @@
+package: javascript-tools
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+standards-version: 1
+description: JavaScript Tools and Utilities
+
+dirs:
+ bin
+mkdirs:
+ bin

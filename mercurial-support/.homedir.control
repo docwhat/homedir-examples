@@ -1,0 +1,17 @@
+package: mercurial-support
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: 
+standards-version: 1
+description: Mercurial Support files for zsh and emacs.
+
+dirs:
+ .zsh
+ .zsh/functions
+ .emacs.d
+ .emacs.d/common
+mkdirs:
+ .zsh
+ .zsh/functions
+ .emacs.d
+ .emacs.d/common

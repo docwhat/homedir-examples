@@ -1,0 +1,82 @@
+#!/usr/bin/python
+"""
+A simple wrapper to run emacsclient if an emacs is available
+otherwise start a new one.
+
+"""
+
+import os, sys
+
+argv = sys.argv
+
+progname = os.path.basename(argv[0])
+if progname == 'emacs':
+    args = []
+elif progname == 'emacsclient':
+    args = []
+else:
+    print >> sys.stderr, "This command should be run as emacs or emacsclient"
+    print >> sys.stderr, "It is a wrapper to startup emacs if it isn't running"
+    sys.exit(1)
+
+### Parse the arguments
+done = False
+idx = 1
+found_filename = False
+is_background = False
+while not done:
+    if not argv[idx:]:
+        done = True
+        continue
+    if argv[idx] == '-a':
+        if argv[idx+1:]:
+            argv.pop(idx+1)
+        argv.pop(idx)
+        continue # avoid index increment
+    elif argv[idx] == '-n':
+        is_background = True
+        idx += 1
+        continue
+    else:
+        idx += 1
+        continue
+    raise AssertionError("This code should never have been reached")
+
+if not found_filename:
+    argv.append( '/tmp/%s.scratch' % os.getlogin() )
+
+## Find the real emacs and emacsclient
+this_dir = os.path.realpath(os.path.dirname(argv[0]))
+this_emacs = os.path.join( this_dir, 'emacs' )
+this_emacsclient = os.path.join( this_dir, 'emacsclient' )
+emacs = emacsclient = None
+for dir in os.getenv('PATH',os.defpath).split(os.pathsep):
+    if os.path.realpath(dir) == this_dir:
+        continue
+    if not os.path.isdir(dir):
+        continue
+    if emacs is None:
+        e = os.path.join(dir,'emacs')
+        if os.path.isfile(e):
+            emacs = e
+    if emacsclient is None:
+        ec = os.path.join(dir,'emacsclient')
+        if os.path.isfile(e):
+            emacsclient = ec
+    if not (emacs is None and emacsclient is None):
+        break
+
+if emacs is None:
+    print >> sys.stderr, "Unable to find real emacs!"
+    sys.exit(1)
+if emacsclient is None:
+    print >> sys.stderr, "Unable to find real emacsclient!"
+    sys.exit(1)
+
+args.insert(0,emacsclient)
+args.extend(['-a',emacs])
+args.extend(argv[1:])
+
+os.execv( emacsclient, args )
+
+

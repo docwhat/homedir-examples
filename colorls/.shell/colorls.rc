@@ -1,0 +1,8 @@
+# Setup the LS stuff
+export LS_COLORS="no=00:fi=00:di=33:pi=44;37;01:so=44;33;01:bd=44;36;01:cd=44;37:or=41;37;05;01:ex=01;32:do=01;05;35:*.cmd=01;32:*.exe=01;32:*.com=01;32:*.btm=01;32:*.bat=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.rar=01;31:*.deb=01;31:*.i386.rpm=01;31:*.i486.rpm=01;31:*.i586.rpm=01;31:*.i686.rpm=01;31:*.src.rpm=00;31:*.png=01;35:*.jpeg=01;35:*.jpg=01;35:*.gif=01;35:*.bmp=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.xcf=01;35:*.au=00;36:*.wav=00;36:*.mp3=00;36:*.ogg=00;36:*.mov=01;37:*.mpg=01;37:*.mpeg=01;37:*.avi=01;37:*.fli=01;37:*.gl=01;37:*.dl=01;37:*.prc=00;32:*.pdb=00;32:"
+alias ls="ls --color=tty --classify -C"
+ls >/dev/null 2>&1
+if [ "$?" != "0" ]; then
+   unalias ls
+   alias ls="ls -CF"
+fi

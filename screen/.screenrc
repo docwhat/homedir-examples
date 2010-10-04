@@ -1,0 +1,55 @@
+# I swiped a few parts of this from Phil! Gregory's screenrc:
+# http://www.aperiodic.net/phil/configs/screenrc
+
+# We know that it's screen. Really, we do.
+startup_message off
+
+# The more scrollback, the better.
+defscrollback 5000
+
+# We hates C-a. yes, we do my precious...
+escape ``
+
+zombie "^mr"
+verbose on
+
+# I rarely want to use X windows apps from within screen
+unsetenv DISPLAY
+
+# Make screen messages stand out a little more - black on bright green.
+sorendition "= KG"
+
+# Detach if left alone too long
+idle 3600 pow_detach
+
+# Since I use the permanent caption bar, might as well have a fancier
+# window list display.
+bind w windowlist
+
+# The key to bounce to the last window
+bind ' ' other
+
+# The permanent caption bar at the bottom of the screen
+caption always "%?%F%{= wB}%:%{= bb}%?%C|%H%?%F%{= wb}%? %L=%-Lw%45>%{= bY}%n%f* %t%{-}%+Lw%-0<"
+
+# Variants on Sven's custom messages.
+activity "%c activity -> %n%f %t"
+bell "%c bell -> %n%f %t^G"
+vbell_msg " *beep* "
+
+# Make control-PgUp and control-PgDn work like the shift equiv. do in xterm.
+bindkey "^[[5;5~" eval "copy" "stuff ^u"
+bindkey -m "^[[5;5~" stuff ^u
+bindkey -m "^[[6;5~" stuff ^d
+
+# Disable the window locking key
+bind "x"
+bind "^x"
+
+# Insert the date
+bind D exec .!. zsh -c 'print -Pn %D{%F}'
+
+# Put your local overrides in this file.
+source $HOME/.screenrc.local
+
+# EOF

@@ -1,0 +1,6 @@
+# -*- sh -*-
+# If we have GNU pwd, then use that instead.
+if command pwd --version 2>/dev/null | grep -q 'GNU coreutils'; then
+    disable pwd
+fi
+#EOF

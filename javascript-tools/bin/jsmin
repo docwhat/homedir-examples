@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -eu
+
+. "${HOME}/.homedir/cache/00init.sh"
+CACHE=$(getHomedirCache jsmin)
+pyfile="${CACHE}/jsmin.py"
+STATUS=$(homedirFetcher \
+  http://www.crockford.com/javascript/jsmin.py.txt \
+  "${pyfile}" \
+  30)
+
+python "${pyfile}" "$@"

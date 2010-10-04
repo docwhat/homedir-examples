@@ -1,0 +1,9 @@
+package: colorls
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: shell-common
+standards-version: 1
+description: Color LS Configuration
+ Sets up the color ls to be pleasant colors
+dirs:
+ .shell

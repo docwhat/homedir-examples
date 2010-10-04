@@ -1,0 +1,10 @@
+package: oggtools
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+standards-version: 1
+description: Simple ogg vorbis tools
+
+dirs:
+ bin
+mkdirs:
+ bin

@@ -1,0 +1,1355 @@
+;; Copyright (C) 2001, 2004 Peter Milliken
+;;
+;; Author: Peter Milliken <peterm@resmed.com.au>,
+;;                        <peterm@unwired.com.au>
+;;
+;; Keywords: language sensitive abbreviation template placeholder token
+;;
+;; GNU Emacs is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; GNU Emacs is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+DELETE LANGUAGE C - 
+DEFINE LANGUAGE C - 
+    /INITIAL_STRING="{compilation_unit}" -
+    /PUNCTUATION_CHARACTERS="*.;()," -
+    /SELF_INSERT_CHARACTERS=" `~!@#$%^&*(),.<>/?;:'[]{}=\-+|"
+    /VALID_IDENTIFIER_CHARACTERS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789"
+    /INDENT_SIZE=2 -
+    /VERSION=1.14
+
+END DEFINE
+
+DELETE PLACEHOLDER  - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER  - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+
+END DEFINE
+
+DELETE PLACEHOLDER BREAK; - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER BREAK; - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "break;"
+
+END DEFINE
+
+DELETE PLACEHOLDER TEXT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER TEXT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=TERMINAL - 
+
+    ""Just enter some text please.""
+
+END DEFINE
+
+DELETE PLACEHOLDER "= {CONSTANT_EXPRESSION}" - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER = {CONSTANT_EXPRESSION} - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "= {constant_expression}"
+
+END DEFINE
+
+DELETE PLACEHOLDER ITERATION_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER ITERATION_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "while_statement"/PLACEHOLDER
+    "do_statement"/PLACEHOLDER
+    "for_statement"/PLACEHOLDER
+
+END DEFINE
+
+DELETE PLACEHOLDER {INCLUDE_FILES}... - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER {INCLUDE_FILES}... - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{include_files}..."
+
+END DEFINE
+
+DELETE PLACEHOLDER WHILE_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER WHILE_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "while ({expression}) {"
+    "  {statement}..."
+    "}"
+
+END DEFINE
+
+DELETE PLACEHOLDER ARRAY_DECLARATOR - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER ARRAY_DECLARATOR - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{identifier}[[constant_expression]]"
+
+END DEFINE
+
+DELETE PLACEHOLDER UNION_SPECIFIER - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER UNION_SPECIFIER - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "union [identifier] [{{struct_declaration}...}]"
+
+END DEFINE
+
+DELETE PLACEHOLDER [TYPE_QUALIFIER]... - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER [TYPE_QUALIFIER]... - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "[type_qualifier]..."
+
+END DEFINE
+
+DELETE PLACEHOLDER FOR_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER FOR_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "for ([loop_init]; [loop_control]; [expression]) {"
+    "  {statement}..."
+    "}"
+
+END DEFINE
+
+DELETE PLACEHOLDER ENUMERATOR - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER ENUMERATOR - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR=", " - 
+    /TYPE=NONTERMINAL - 
+
+    "{identifier} [= {constant_expression}]"
+
+END DEFINE
+
+DELETE PLACEHOLDER STATIC_OR_EXTERN - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER STATIC_OR_EXTERN - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "static"
+    "extern"
+
+END DEFINE
+
+DELETE PLACEHOLDER COMPILATION_UNIT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER COMPILATION_UNIT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "[{include_files}...]"
+    " "
+    "[{data_types_or_declarations}...]"
+    " "
+    "[{function_definition}...]"
+    " "
+    "[main_function]"
+
+END DEFINE
+
+DELETE PLACEHOLDER ELSE_PART - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER ELSE_PART - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "else {"
+    "  {statement}..."
+    "}"
+
+END DEFINE
+
+DELETE PLACEHOLDER "= {INITIALIZER}" - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER = {INITIALIZER} - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "= {initializer}"
+
+END DEFINE
+
+DELETE PLACEHOLDER LABELED_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER LABELED_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{identifier} :"
+    "  {statement}..."
+
+END DEFINE
+
+DELETE PLACEHOLDER DECLARATION_LIST - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER DECLARATION_LIST - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{declaration}..."
+
+END DEFINE
+
+DELETE PLACEHOLDER INIT_DECLARATOR - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER INIT_DECLARATOR - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR=", " - 
+    /TYPE=NONTERMINAL - 
+
+    "{declarator} [= {initializer}]"
+
+END DEFINE
+
+DELETE PLACEHOLDER DIRECT_ABSTRACT_DECLARATOR - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER DIRECT_ABSTRACT_DECLARATOR - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "({abstract_declarator})"
+    "[ ]"
+    "[ {constant_expression} ]"
+    "{direct_abstract_declarator} [ ]"
+    "{direct_abstract_declarator} [ {constant_expression} ]"
+    "()"
+    "({parameter_declaration}...[, ...])"
+    "{direct_abstract_declarator} ()"
+    "{direct_abstract_declarator} ({parameter_declaration}...[, ...])"
+
+END DEFINE
+
+DELETE PLACEHOLDER PROTOTYPE_DECLARATION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER PROTOTYPE_DECLARATION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "[static_or_extern] {data_type_specifier} [*]{function_name} ([{parameter_declaration}...[, ...]]);"
+
+END DEFINE
+
+DELETE PLACEHOLDER IDENTIFIER - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER IDENTIFIER - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR=", " - 
+    /TYPE=TERMINAL - 
+
+    "Please enter a valid identifier"
+
+END DEFINE
+
+DELETE PLACEHOLDER INITIALIZER - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER INITIALIZER - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "constant_expression"/PLACEHOLDER
+    "{{init_expression}...}"
+    ""{string_literal}""
+
+END DEFINE
+
+DELETE PLACEHOLDER OBJECT_DECLARATION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER OBJECT_DECLARATION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "[storage_class_specifier] [[type_qualifier]...] {data_type_specifier} {init_declarator};"
+
+END DEFINE
+
+DELETE PLACEHOLDER {{STRUCT_DECLARATION}...} - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER {{STRUCT_DECLARATION}...} - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{{struct_declaration}...}"
+
+END DEFINE
+
+DELETE PLACEHOLDER SWITCH_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER SWITCH_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "switch ({expression}) {"
+    "  [case_part]..."
+    "  [default_part]"
+    "}"
+
+END DEFINE
+
+DELETE PLACEHOLDER TYPE_SPECIFIER - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER TYPE_SPECIFIER - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=TERMINAL - 
+
+    "Please enter a valid type_specifier"
+
+END DEFINE
+
+DELETE PLACEHOLDER COMPOUND_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER COMPOUND_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{"
+    "   [data_types_or_declarations]..."
+    " "
+    "   [statement]..."
+    "}"
+
+END DEFINE
+
+DELETE PLACEHOLDER POINTER - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER POINTER - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "* [type_qualifier_list] [pointer]"
+
+END DEFINE
+
+DELETE PLACEHOLDER TYPE_QUALIFIER_LIST - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER TYPE_QUALIFIER_LIST - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{type_qualifier}..."
+
+END DEFINE
+
+DELETE PLACEHOLDER DATA_TYPES_OR_DECLARATIONS - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER DATA_TYPES_OR_DECLARATIONS - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=VERTICAL - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "object_declaration"/PLACEHOLDER
+    "prototype_declaration"/PLACEHOLDER
+    "typedef_declaration"/PLACEHOLDER
+
+END DEFINE
+
+DELETE PLACEHOLDER STRING_LITERAL - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER STRING_LITERAL - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=TERMINAL - 
+
+    ""Enter a literal string i.e. "abc"""
+
+END DEFINE
+
+DELETE PLACEHOLDER DECLARATOR - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER DECLARATOR - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR=", " - 
+    /TYPE=MENU - 
+
+    "identifier"/PLACEHOLDER
+    "({declarator})"
+    "array_declarator"/PLACEHOLDER
+    "function_declarator"/PLACEHOLDER
+
+END DEFINE
+
+DELETE PLACEHOLDER INCLUDE_FILES - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER INCLUDE_FILES - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "#include <{file_name}>"
+    "#include "{string_literal}""
+
+END DEFINE
+
+DELETE PLACEHOLDER STRUCT_DECLARATOR - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER STRUCT_DECLARATOR - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "[declarator]... : {constant_expression}"
+
+END DEFINE
+
+DELETE PLACEHOLDER FUNCTION_DECLARATOR - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER FUNCTION_DECLARATOR - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{identifier} ([{parameter_declaration}...[, ...]])"
+
+END DEFINE
+
+DELETE PLACEHOLDER TYPE_QUALIFIER - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER TYPE_QUALIFIER - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR=" " - 
+    /TYPE=MENU - 
+
+    "const"
+    "volatile"
+
+END DEFINE
+
+DELETE PLACEHOLDER DEFAULT_PART - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER DEFAULT_PART - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "default :"
+    "  [statement]..."
+
+END DEFINE
+
+DELETE PLACEHOLDER EXPRESSION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER EXPRESSION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=TERMINAL - 
+
+    ""Just type in standard expression""
+
+END DEFINE
+
+DELETE PLACEHOLDER TYPEDEF_DECLARATION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER TYPEDEF_DECLARATION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "typedef [type_qualifier]... {data_type_specifier} {declarator}...;"
+
+END DEFINE
+
+DELETE PLACEHOLDER STORAGE_CLASS_SPECIFIER - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER STORAGE_CLASS_SPECIFIER - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "extern"
+    "static"
+    "auto"
+    "register"
+
+END DEFINE
+
+DELETE PLACEHOLDER TYPE_NAME - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER TYPE_NAME - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{specifier_qualifier_list} [abstract_declarator]"
+
+END DEFINE
+
+DELETE PLACEHOLDER "CASE {CONSTANT_EXPRESSION}:" - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER CASE {CONSTANT_EXPRESSION}: - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "case {constant_expression}:"
+
+END DEFINE
+
+DELETE PLACEHOLDER ABSTRACT_DECLARATOR - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER ABSTRACT_DECLARATOR - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "[pointer] [direct_abstract_declarator]"
+
+END DEFINE
+
+DELETE PLACEHOLDER {DATA_TYPES_OR_DECLARATIONS}... - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER {DATA_TYPES_OR_DECLARATIONS}... - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{data_types_or_declarations}..."
+
+END DEFINE
+
+DELETE PLACEHOLDER MAIN_FUNCTION_DECLARATOR - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER MAIN_FUNCTION_DECLARATOR - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "{data_type_specifier} main()"
+    "{data_type_specifier} main(int argc, char *argv[])"
+    "{data_type_specifier} main(int argc, char *argv[], char *envp[])"
+
+END DEFINE
+
+DELETE PLACEHOLDER * - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER * - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "*"
+
+END DEFINE
+
+DELETE PLACEHOLDER STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=VERTICAL - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "labeled_statement"/PLACEHOLDER
+    "compound_statement"/PLACEHOLDER
+    "{assignment_expression};"
+    "selection_statement"/PLACEHOLDER
+    "iteration_statement"/PLACEHOLDER
+    "jump_statement"/PLACEHOLDER
+    "comment_statement"/PLACEHOLDER
+
+END DEFINE
+
+DELETE PLACEHOLDER CONSTANT_EXPRESSION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER CONSTANT_EXPRESSION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=TERMINAL - 
+
+    ""Just enter a constant expression""
+
+END DEFINE
+
+DELETE PLACEHOLDER FUNCTION_NAME - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER FUNCTION_NAME - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=TERMINAL - 
+
+    "Please enter a valid function_name"
+
+END DEFINE
+
+DELETE PLACEHOLDER LOOP_INIT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER LOOP_INIT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{expression}"
+
+END DEFINE
+
+DELETE PLACEHOLDER CASE_PART - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER CASE_PART - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=VERTICAL - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "case {constant_expression}:"
+    "[case {constant_expression}:]..."
+    "  [statement]..."
+    "  [break;]"
+
+END DEFINE
+
+DELETE PLACEHOLDER PRIMARY_EXPRESSION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER PRIMARY_EXPRESSION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "identifier"/PLACEHOLDER
+    "constant"/PLACEHOLDER
+    "string_literal"/PLACEHOLDER
+    "({expression})"
+
+END DEFINE
+
+DELETE PLACEHOLDER DECLARATION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER DECLARATION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=VERTICAL - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "[type_qualifier] [storage_class_specifier] {data_type_specifier} {init_declarator}...;"
+
+END DEFINE
+
+DELETE PLACEHOLDER JUMP_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER JUMP_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "goto {identifier};"
+    "continue;"
+    "break;"
+    "return [expression];"
+
+END DEFINE
+
+DELETE PLACEHOLDER STRUCT_SPECIFIER - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER STRUCT_SPECIFIER - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "struct [identifier] [{{struct_declaration}...}]"
+
+END DEFINE
+
+DELETE PLACEHOLDER MAIN_FUNCTION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER MAIN_FUNCTION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{main_function_declarator}"
+    "{"
+    "   {data_types_or_declarations}..."
+    " "
+    "   {statement}..."
+    "}"
+
+END DEFINE
+
+DELETE PLACEHOLDER CONSTANT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER CONSTANT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=TERMINAL - 
+
+    "Please enter a valid constant"
+
+END DEFINE
+
+DELETE PLACEHOLDER FILE_NAME - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER FILE_NAME - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=TERMINAL - 
+
+    "Please enter a valid file_name"
+
+END DEFINE
+
+DELETE PLACEHOLDER LOOP_CONTROL - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER LOOP_CONTROL - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{expression}"
+
+END DEFINE
+
+DELETE PLACEHOLDER ", ..." - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER , ... - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    ", ..."
+
+END DEFINE
+
+DELETE PLACEHOLDER STRUCT_DECLARATION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER STRUCT_DECLARATION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=VERTICAL - 
+    /SEPARATOR="; " - 
+    /TYPE=NONTERMINAL - 
+
+    "{data_type_specifier} {declarator}"
+
+END DEFINE
+
+DELETE PLACEHOLDER INIT_EXPRESSION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER INIT_EXPRESSION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR=", " - 
+    /TYPE=NONTERMINAL - 
+
+    "{initializer}"
+
+END DEFINE
+
+DELETE PLACEHOLDER "{PARAMETER_DECLARATION}...[, ...]" - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER {PARAMETER_DECLARATION}...[, ...] - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{parameter_declaration}...[, ...]"
+
+END DEFINE
+
+DELETE PLACEHOLDER SELECTION_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER SELECTION_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "if_statement"/PLACEHOLDER
+    "switch_statement"/PLACEHOLDER
+
+END DEFINE
+
+DELETE PLACEHOLDER DO_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER DO_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "do {"
+    "  {statement}..."
+    "} while ({expression});"
+
+END DEFINE
+
+DELETE PLACEHOLDER PARAMETER_DECLARATION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER PARAMETER_DECLARATION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR=", " - 
+    /TYPE=NONTERMINAL - 
+
+    "{data_type_specifier} {declarator}"
+
+END DEFINE
+
+DELETE PLACEHOLDER IF_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER IF_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "if ({expression}) {"
+    "  {statement}..."
+    "}"
+    "[elsif_part]..."
+    "[else_part]"
+
+END DEFINE
+
+DELETE PLACEHOLDER COMMENT_STATEMENT - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER COMMENT_STATEMENT - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "/* {text} */"
+
+END DEFINE
+
+DELETE PLACEHOLDER ASSIGNMENT_EXPRESSION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER ASSIGNMENT_EXPRESSION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=TERMINAL - 
+
+    "Please enter a valid assignment_expression"
+
+END DEFINE
+
+DELETE PLACEHOLDER ELSIF_PART - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER ELSIF_PART - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=VERTICAL - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "else if ({expression}) {"
+    "  {statement}..."
+    "}"
+
+END DEFINE
+
+DELETE PLACEHOLDER IDENTIFIER_LIST - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER IDENTIFIER_LIST - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{identifier}..."
+
+END DEFINE
+
+DELETE PLACEHOLDER {FUNCTION_DEFINITION}... - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER {FUNCTION_DEFINITION}... - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "{function_definition}..."
+
+END DEFINE
+
+DELETE PLACEHOLDER FUNCTION_DEFINITION - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER FUNCTION_DEFINITION - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "[static_or_extern] {data_type_specifier} [*]{function_name} ([{parameter_declaration}...[, ...]])"
+    "{"
+    "  [declaration]..."
+    " "
+    "  [statement]..."
+    "}"
+
+END DEFINE
+
+DELETE PLACEHOLDER ENUM_SPECIFIER - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER ENUM_SPECIFIER - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=NONTERMINAL - 
+
+    "enum [identifier] {{enumerator}...}"
+
+END DEFINE
+
+DELETE PLACEHOLDER SPECIFIER_QUALIFIER_LIST - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER SPECIFIER_QUALIFIER_LIST - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "{type_specifier} {specifier_qualifier_list}"
+    "type_specifier"/PLACEHOLDER
+    "{type_qualifier} {specifier_qualifier_list}"
+    "type_qualifier"/PLACEHOLDER
+
+END DEFINE
+
+DELETE PLACEHOLDER DATA_TYPE_SPECIFIER - 
+    /LANGUAGE="C" - 
+DEFINE PLACEHOLDER DATA_TYPE_SPECIFIER - 
+    /LANGUAGE="C" - 
+    /NOAUTO_SUBSTITUTE - 
+    /DESCRIPTION="" -
+    /DUPLICATION=CONTEXT_DEPENDENT - 
+    /SEPARATOR="" - 
+    /TYPE=MENU - 
+
+    "void"
+    "char"
+    "int"
+    "float"
+    "double"
+    "unsigned char"
+    "signed char"
+    "unsigned short int"
+    "signed short int"
+    "short int"
+    "unsigned int"
+    "signed int"
+    "unsigned long int"
+    "signed long int"
+    "long int"
+    "struct_specifier"/PLACEHOLDER
+    "union_specifier"/PLACEHOLDER
+    "enum_specifier"/PLACEHOLDER
+    "type_name"/PLACEHOLDER
+
+END DEFINE
+
+The following tokens are generated automatically:
+DELETE TOKEN CASE - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN CASE - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=CASE_PART - 
+
+END DEFINE
+
+DELETE TOKEN DO - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN DO - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=DO_STATEMENT - 
+
+END DEFINE
+
+DELETE TOKEN TYPEDEF - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN TYPEDEF - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=TYPEDEF_DECLARATION - 
+
+END DEFINE
+
+DELETE TOKEN CONST - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN CONST - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=TYPE_QUALIFIER - 
+
+END DEFINE
+
+DELETE TOKEN GOTO - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN GOTO - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=JUMP_STATEMENT - 
+
+END DEFINE
+
+DELETE TOKEN FOR - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN FOR - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=FOR_STATEMENT - 
+
+END DEFINE
+
+DELETE TOKEN DEFAULT - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN DEFAULT - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=DEFAULT_PART - 
+
+END DEFINE
+
+DELETE TOKEN UNION - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN UNION - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=UNION_SPECIFIER - 
+
+END DEFINE
+
+DELETE TOKEN VOID - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN VOID - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=DATA_TYPE_SPECIFIER - 
+
+END DEFINE
+
+DELETE TOKEN ENUM - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN ENUM - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=ENUM_SPECIFIER - 
+
+END DEFINE
+
+DELETE TOKEN WHILE - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN WHILE - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=WHILE_STATEMENT - 
+
+END DEFINE
+
+DELETE TOKEN STRUCT - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN STRUCT - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=STRUCT_SPECIFIER - 
+
+END DEFINE
+
+DELETE TOKEN ELSE - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN ELSE - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=ELSE_PART - 
+
+END DEFINE
+
+DELETE TOKEN #INCLUDE - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN #INCLUDE - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=INCLUDE_FILES - 
+
+END DEFINE
+
+DELETE TOKEN SWITCH - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN SWITCH - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=SWITCH_STATEMENT - 
+
+END DEFINE
+
+DELETE TOKEN STATIC - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN STATIC - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=STATIC_OR_EXTERN - 
+
+END DEFINE
+
+DELETE TOKEN EXTERN - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN EXTERN - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=STORAGE_CLASS_SPECIFIER - 
+
+END DEFINE
+
+DELETE TOKEN IF - 
+    /LANGUAGE="C" - 
+DEFINE TOKEN IF - 
+    /LANGUAGE="C" - 
+    /PLACEHOLDER=IF_STATEMENT - 
+
+END DEFINE
+

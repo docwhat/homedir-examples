@@ -1,0 +1,148 @@
+# -*- shell-script -*-
+## This file sets up (usually tab) completion.
+
+# This is usually done in part by the default setup of ZSH, but it
+# doesn't hurt to do it again.
+
+autoload -U colors
+colors
+
+autoload -U compinit
+compinit
+
+# Adds bash's compgen and complete commands
+autoload -U bashcompinit
+bashcompinit
+
+# What type of completion are we using...
+zstyle ':completion:*' completer _complete _match _approximate
+
+if [[ $ZSH_VERSION > 3.1.5 ]]; then
+    zmodload -i zsh/complist
+
+    # completion colours
+    zstyle ':completion:*' list-colors "$LS_COLORS"
+fi
+
+# caching
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache/$HOST
+
+# remove slash if argument is a directory
+zstyle ':completion:*' squeeze-slashes true
+
+# history
+zstyle ':completion:*:history-words' stop yes
+zstyle ':completion:*:history-words' remove-all-dups yes
+zstyle ':completion:*:history-words' list false
+zstyle ':completion:*:history-words' menu yes
+
+zstyle ':completion:*:descriptions'  format "%{$fg[red]%}completing %B%d%b%{$reset_color%}"
+zstyle ':completion:*:corrections'   format "%{$fg[red]%}%d (errors: %e)%{$reset_color%}"
+zstyle ':completion:*:messages'      format '%d'
+zstyle ':completion:*:warnings'      format "%{$fg[red]%}No matches for: %B%d%{$reset_color%}"
+zstyle ':completion:*:corrections'   format '%B%d (errors: %e)%b'
+zstyle ':completion:*'               format 'completing %d'
+zstyle ':completion:*'               format "%{$fg[red]%}completing %B%d%b%{$reset_color%}"
+zstyle ':completion:*'               group-name ''
+zstyle ':completion:*'               verbose yes
+
+# cd directory stack menu
+zstyle ':completion:*:*:cd:*:directory-stack' menu yes select
+
+# approximation
+zstyle ':completion:*:match:*' original only
+zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX+$#SUFFIX)/3 )) numeric )'
+
+# array completion element sorting
+zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
+
+# ssh, scp, ping, host
+test ! -d "$HOME/.ssh" && mkdir "$HOME/.ssh"
+test ! -f "$HOME/.ssh/known_hosts" && touch "$HOME/.ssh/known_hosts"
+test ! -f "$HOME/.ssh/config" && touch "$HOME/.ssh/config"
+
+zstyle ':completion:*:(scp|rsync):*' tag-order \
+        'hosts:-host hosts:-domain:domain hosts:-ipaddr:IP\ address *'
+zstyle ':completion:*:(scp|rsync):*' group-order \
+        users files all-files hosts-domain hosts-host hosts-ipaddr
+zstyle ':completion:*:ssh:*' tag-order \
+        users 'hosts:-host hosts:-domain:domain hosts:-ipaddr:IP\ address *'
+zstyle ':completion:*:ssh:*' group-order \
+        hosts-domain hosts-host users hosts-ipaddr
+
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-host' ignored-patterns \
+        '*.*' loopback localhost
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-domain' ignored-patterns \
+        '<->.<->.<->.<->' '^*.*' '*@*'
+zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns \
+        '^<->.<->.<->.<->' '127.0.0.<->'
+zstyle ':completion:*:(ssh|scp|rsync):*:users' ignored-patterns \
+        adm bin daemon halt lp named shutdown sync
+
+zstyle -e ':completion:*:(ssh|scp|ping|host|nmap|rsync):*' hosts 'reply=(
+        ${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) \
+                        /dev/null)"}%%[#| ]*}//,/ }
+        ${=${(f)"$(cat /etc/hosts(|)(N) <<(ypcat hosts 2>/dev/null))"}%%\#*}
+        ${=${${${${(@M)${(f)"$(<~/.ssh/config)"}:#Host *}#Host }:#*\**}:#*\?*}}
+        )'
+
+# kill
+zstyle ':completion:*:*:kill:*:processes' list-colors "=(#b) #([0-9]#)*=${color[bold]};${color[cyan]}=${color[bold]};${color[red]}"
+zstyle ':completion:*:*:kill:*'  menu yes select
+zstyle ':completion:*:kill:*'    force-list always
+zstyle ':completion:*:kill:*'    command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+zstyle ':completion:*:kill:*'    insert-ids single
+zstyle ':completion:*:*:kill:*'  menu yes select
+zstyle ':completion:*:kill:*'    force-list always
+zstyle ':completion:*:processes' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
+# man
+zstyle ':completion:*:man:*' separate-sections true
+
+# mutt
+if [[ -f ~/.mutt/aliases ]]; then
+    zstyle ':completion:*:*:mutt:*' menu yes select
+    zstyle ':completion:*:mutt:*' users ${${${(f)"$(<~/.mutt/aliases)"}#alias[[:space:]]}%%[[:space:]]*}
+fi
+
+# mp3 players
+zstyle ':completion:*:*:mpg123:*' file-patterns '*.(mp3|MP3):mp3\ files *(-/):directories'
+zstyle ':completion:*:*:mpg321:*' file-patterns '*.(mp3|MP3):mp3\ files *(-/):directories'
+zstyle ':completion:*:*:ogg123:*' file-patterns '*.(ogg|OGG|flac):ogg\ files *(-/):directories'
+zstyle ':completion:*:*:mocp:*'   file-patterns '*.(wav|WAV|mp3|MP3|ogg|OGG|flac):ogg\ files *(-/):directories'
+
+# ?
+zstyle ':completion::*:(-command-|export):*' fake-parameters ${${${_comps[(I)-value-*]#*,}%%,*}:#-*-}
+zstyle ':completion:*:-tilde-:*' group-order 'named-directories' 'path-directories' 'users' 'expand'
+
+# ignore completion functions for commands you don't have
+zstyle ':completion:*:functions' ignored-patterns '(_*|pre(cmd|exec))'
+
+# Prevent CVS/SVN files/directories from being completed
+zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)(CVS|.svn)'
+zstyle ':completion:*:cd:*' ignored-patterns '(*/)(CVS|.svn)'
+
+# Prevent lost+found directory from being completed
+zstyle ':completion:*:cd:*' ignored-patterns '(*/)#lost+found'
+
+# Ignore completion functions for commands you don't have:
+zstyle ':completion:*:functions' ignored-patterns '_*'
+
+# Ignore same file on rm
+zstyle ':completion:*:(rm|kill|diff):*' ignore-line yes
+zstyle ':completion:*:rm:*' file-patterns '*:all-files'
+
+# automagic url quoter
+autoload -U url-quote-magic
+zle -N self-insert url-quote-magic
+
+# add gnu default completions
+compdef _gnu_generic ctags
+
+### bash completions
+##foreach i (~/.zsh/bashcompl/*(N));
+##    source $i;
+##end
+
+#EOF

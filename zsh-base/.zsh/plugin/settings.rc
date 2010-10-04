@@ -1,0 +1,19 @@
+# -*- sh -*-
+## This file sets up common settings for the shell
+
+# Emacs key bindings
+bindkey -e
+
+# Don't exit on EOF -- require exit or logout
+setopt ignore_eof
+
+# We like the extended globbing patterns
+setopt extended_glob
+
+# Wait if we try rm *
+setopt rm_star_wait
+
+# Don't expand * into all it's options with tab.
+bindkey "^I" complete-word
+
+#EOF

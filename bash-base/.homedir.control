@@ -1,0 +1,10 @@
+package: bash-base
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: shell-common
+standards-version: 1
+description: Basic bash configuration
+ Basic bash configuration.  
+dirs:
+ .bash
+ .bash/plugin

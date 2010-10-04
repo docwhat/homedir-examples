@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+
+import os, sys
+
+def findApp(appnames):
+    "Searches the PATH and returns the first appname it finds"
+    pathlist = os.getenv('PATH').split(os.pathsep)
+
+    for app in appnames:
+        for path in pathlist:
+            p = os.path.join( path, app )
+            if os.path.isfile( p ):
+                return p
+    return ''
+
+if __name__ == "__main__":
+    print findApp(sys.argv[1:])
+

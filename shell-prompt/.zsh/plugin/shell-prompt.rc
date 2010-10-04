@@ -1,0 +1,10 @@
+#!/bin/zsh -f
+# -*- sh -*-
+# Load the theme-able prompt system and use it to set a prompt.
+# Probably only suitable for a dark background terminal.
+
+if [ "${TERM}" != "dumb" -a "${EMACS}" != 't' ]; then
+    autoload -U promptinit
+    promptinit
+    prompt docwhat
+fi

@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -eu
+
+if ! rhino -e "1;"; then
+    echo "You must have rhino installed for jslint to work."
+    if lsb_release --id | grep -q -Ei '(ubuntu|debian)$'; then
+        echo "Use this command to install rhino:"
+        echo "  sudo apt-get install rhino"
+    else
+        echo "You can get it at http://www.mozilla.org/rhino/"
+    fi
+    exit 1
+fi
+
+. "${HOME}/.homedir/cache/00init.sh"
+CACHE=$(getHomedirCache jslint)
+jsfile="${CACHE}/jslint-rhino.js"
+
+STATUS=$(homedirFetcher \
+    http://www.jslint.com/rhino/jslint.js \
+    "${jsfile}" \
+    30)
+
+if [ "${1:-}" = "-p" ]; then
+    PRETTY=1
+    shift
+else
+    PRETTY=0
+fi
+RHINO=$(hash -t rhino)
+
+for fname in "$@"; do
+    sfname=$(basename "${fname}")
+    if [ $PRETTY = 1 ]; then
+        ${RHINO} \
+            "${jsfile}" \
+            "${fname}" \
+            | perl -p \
+            -e 's!^Lint at line (\d+) character (\d+):!'"lint at ${sfname}"':$1:$2 !;'
+    else
+        ${RHINO} \
+            "${jsfile}" \
+            "${fname}"
+    fi
+done
+
+#EOF

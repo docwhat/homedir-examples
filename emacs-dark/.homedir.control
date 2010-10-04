@@ -1,0 +1,15 @@
+package: emacs-dark
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: emacs-base
+standards-version: 1
+description: Emacs configuration for dark colors
+
+dirs:
+ bin
+ .emacs.d
+ .emacs.d/common
+
+mkdirs:
+ .emacs.d
+ 

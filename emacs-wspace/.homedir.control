@@ -1,0 +1,11 @@
+package: emacs-wspace
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: emacs-base
+standards-version: 1
+description: Whitespace Fontlock for Emacs
+  http://www.emacswiki.org/cgi-bin/wiki/show-wspace.el
+
+dirs:
+ .emacs.d
+ .emacs.d/common

@@ -1,0 +1,246 @@
+#!/usr/bin/perl -w
+# $Id: rename,v 1.4 2001/07/25 15:56:15 docwhat Exp $
+#
+# This version is maintained by Christian Holtje <docwhat@gerf.org>
+# 
+# This is based on Larry's filename fixer script distributed 
+# with perl as 'eg/rename' in the source.
+#
+# This script is free software; you can redistribute it and/or modify it
+# under the same terms as Perl itself.
+#
+# Additional ideas and such taken from Robin Barker's (Robin.Barker@npl.co.uk)
+# version of the rename script.
+$| = 1;
+use strict;
+
+use File::Copy;
+use Getopt::Long;
+
+my($usage, $verbose, $interact, $debug, $copy);
+
+GetOptions( "help"			=> \$usage,
+            "verbose"		=> \$verbose,
+            "copy"			=> \$copy,
+            "debug"			=> \$debug,
+            "interactive"	=> \$interact
+            )
+    or $usage = 1;
+
+my $op = shift or $usage = 1;
+
+if( $usage ) {
+    # Examples are from the "Perl Cookbook" by Tom Christiansen &
+    #                                          Nathan Torkington
+    print <<'End';
+Usage: rename [options] <perlexpr> [files]
+
+  Description:
+    Renames files using any perl expression.  The current filename
+    is stored in '$_' .
+
+  Options:
+    --help        -h      Usage Help
+    --verbose     -v      Display all changes
+    --copy        -c      Copy instead of move
+    --interactive -i      Ask before making each change
+
+  Examples:
+    # Strips '.orig' from each filename:
+    % rename 's/\.orig$//' *.orig
+
+    # Uppercase to lowercase:
+    % rename 'tr/A-Z/a-z/ unless /^Make/' *
+
+    # Locale version of above:
+    % rename 'use locale; $_ = lc($_) unless /^Make/' *
+
+    # Appends .bad to all the .f fortran files (humor, really)
+    % rename '$_ .= \".bad\"' *.f
+
+    # Switch backup files in /tmp from *~ to .#*
+    % find /tmp -name '*~' -print | rename 's/^(.+)~$/.#$1/'
+
+End
+    exit 0;
+}
+
+my $verb;
+my $Verb;
+my $verbed;
+if( $copy ) {
+    $verb = "copy";
+    $Verb = "Copy";
+    $verbed = "copied";
+} else {
+    $verb = "rename";
+    $Verb = "Rename";
+    $verbed = "renamed";
+}
+
+# Handle reading from STDIN
+if (!@ARGV) {
+    print "reading filenames from STDIN\n" if $verbose;
+    @ARGV = <STDIN>;
+    chomp(@ARGV);
+}
+
+my $renamecount = 0;
+
+for (@ARGV) {
+    my $was  = $_;
+    eval $op;
+    die $@ if $@;
+
+    next if( $was eq $_ ); # No renaming to be done.
+
+    # Check if the file exists already.
+    if( -e $_ ) {
+        warn "'$was' was not $verbed: '$_' already exists\n";
+        next;
+    }
+ 
+    # Check, if interactive, if the user wants to
+    if( $interact ) {
+        print "$Verb '$was' to '$_' (y/N)? ";
+        next if( <STDIN> !~ /^y/i );
+    }
+
+    # Rename the file
+    if( $copy && copy($was,$_)) {
+        print "'$was' -> '$_'\n" if $verbose;
+        $renamecount++;
+        next;
+    }
+
+    if( !$copy && move($was,$_)) {
+        print "'$was' -> '$_'\n" if $verbose;
+        $renamecount++;
+        next;
+    }
+
+    # Fell through, didn't work
+    warn "Can't $verb $was $_: $!\n";
+}
+
+print "$renamecount files $verbed\n" if $verbose;
+
+exit 0;
+__END__
+
+=head1 NAME
+
+rename - renames multiple files
+
+=head1 SYNOPSIS
+
+B<rename> S<[ I<options> ]> I<perlexpr> S<[ I<files> ]>
+
+=head1 DESCRIPTION
+
+C<rename>
+renames the filenames supplied according to the perl
+expression I<perlexpr>.
+I<perlexpr> is a Perl expression which is
+used to modify the string C<$_>.  The expression doesn't have
+to be successful for all filenames.
+
+If a given filename is not modified by the expression, it will not be
+renamed.
+
+If no filenames are given on the command line, filenames will be read
+via standard input.
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-h> B<--help>
+
+Help: a helpful description of how to use rename
+
+=item B<-v> B<--verbose>
+
+Verbose: displays all changes as they occur
+
+=item B<-c> B<--copy>
+
+Copy: copy files instead of renaming them
+
+=item B<-i> B<--interactive>
+
+Ask before making each change
+
+=back
+
+=head1 EXAMPLES
+
+For example, to rename all files matching C<*.bak> to strip the extension,
+you might say
+
+	rename 's/\.bak$//' *.bak
+
+To translate uppercase names to lower, except Makefiles, you'd use
+
+	rename 'tr/A-Z/a-z/ unless /^Make/' *
+
+The above doesn't take locale into consideration.  To use locale to correctly
+change the case of a filename, you'd use 
+
+	rename 'use locale; $_ = lc($_) unless /^Make/' *
+
+To append .bad to all your .f fortran files (yeah, this is humor)
+
+	rename '$_ .= \".bad\"' *.f
+
+To switch all your backup files in C</tmp> from C<*~> to C<.#*>
+
+	find /tmp -name '*~' -print | rename 's/^(.+)~$/.#$1/'
+
+To copy all files from one project to another
+   
+	mkdir project2
+	rename -c 's!project1/project1.*!project2/project2.*!' project1/*
+
+=head1 ENVIRONMENT
+
+No environment variables are used.
+
+=head1 AUTHOR
+
+Original version by Larry Wall ( http://www.wall.org/~lwall/ ) and included
+with the perl source as 'eg/rename'.
+
+This version is by Christian Höltje <docwhat@gerf.org>
+( http://docwhat.gerf.org/ )
+
+Additional ideas and code taken from Robin Barker's (Robin.Barker@npl.co.uk)
+version of this script.  I also swiped the POD documentation as a starting
+point for this.
+
+
+=head1 SEE ALSO
+
+cp(1), mv(1), perl(1), File::Copy(3)
+
+=head1 LICENSE
+
+This script is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=head1 DIAGNOSTICS
+
+If you give an invalid Perl expression you'll get a syntax error.
+
+=head1 BUGS
+
+The original
+C<rename>
+did not check for the existence of target filenames,
+so had to be used with care.
+I hope I've fixed that (Robin Barker).
+
+Earlier versions couldn't rename (move) files across filesystems.
+This should be fixed (Christian Holtje).
+
+=cut

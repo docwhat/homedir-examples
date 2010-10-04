@@ -1,0 +1,9 @@
+package: python-commandline
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: shell-common
+standards-version: 1
+description: Handy configuration to make the command line python easier
+
+dirs:
+ .shell

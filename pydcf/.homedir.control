@@ -1,0 +1,10 @@
+package: pydcf
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+standards-version: 1
+description: a program to dump images onto media in DCF format
+
+dirs:
+ bin
+mkdirs:
+ bin

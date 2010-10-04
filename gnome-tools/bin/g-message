@@ -1,0 +1,99 @@
+#!/bin/bash
+### NOTE: Requires libnotify-bin's notify-send
+
+dohelp=0
+user=`whoami`
+timeout=60000
+
+while getopts "u:t:hd" flag
+do
+  case "$flag" in
+      '?')
+          dohelp=1
+          ;;
+      'd') 
+          # Debugging Flag
+          set -x
+          ;;
+      'h')
+          dohelp=1
+          ;;
+      'u')
+          user="$OPTARG"
+          ;;
+      't')
+          timeout=$(($OPTARG+0))
+          ;;
+  esac
+done
+
+# Push the parsed flags off the stack so we can get to title and text
+shift $((OPTIND-1)); OPTIND=1
+
+# get the title and text
+title=$1
+text=$2
+
+if [ -z "$title" ]; then
+    echo "error: You need to give me a title" >&2
+    dohelp=1
+fi
+if [ -z "$text" ]; then
+    text=$title
+fi
+
+# Check the timeout
+if [ -z "$timeout" ]; then
+    echo "error: Timeout must be a number" >&2
+    dohelp=1
+fi
+
+# Collect the dbus addresses
+declare -a dbuses
+pushdbus() {
+  if [ -z "$1" ]; then
+      return # nothing to push
+  fi
+  for dbus in "${dbuses[@]}"; do
+      if [ "${dbus}" = "$1" ]; then
+          return # It's a duplicate
+      fi
+  done
+  dbuses[${#dbuses[@]}]="$1"
+}
+
+# Default environment, if it exists
+pushdbus "${DBUS_SESSION_BUS_ADDRESS}"
+
+# Gnome
+for pid in $(pgrep -u $user gnome-session); do
+    # find DBUS session bus for this session
+    pushdbus `grep -z DBUS_SESSION_BUS_ADDRESS \
+             /proc/$pid/environ | sed -e 's/DBUS_SESSION_BUS_ADDRESS=//'`
+done
+# X-Session
+for pid in $(pgrep -u $user x-session); do
+    # find DBUS session bus for this session
+    pushdbus `grep -z DBUS_SESSION_BUS_ADDRESS \
+             /proc/$pid/environ | sed -e 's/DBUS_SESSION_BUS_ADDRESS=//'`
+done
+
+# Help message
+if [ $dohelp != 0 ]; then
+    cat <<EOF >&2
+Send a message to Gnome's notification service via DBUS
+usage: $0 [-t timeout] [-u user] title [text]
+
+ -t timeout     duration of the notification in seconds [default: 60000]
+ -u user        user to notify [defaults to you: $(whoami)]
+ -h             this help
+
+If text isn't specified, then title is used.
+EOF
+    exit 1
+fi
+
+for dbus in "${dbuses[@]}";
+do
+  env DBUS_SESSION_BUS_ADDRESS="${dbus}" notify-send -u low -t $timeout "$title" "$text"
+done

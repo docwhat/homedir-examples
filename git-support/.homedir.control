@@ -1,0 +1,19 @@
+package: git-support
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: shell-prompt
+standards-version: 1
+description: git support files for zsh and emacs.
+
+dirs:
+ .git_hooks
+ .zsh
+ .zsh/functions
+ .emacs.d
+ .emacs.d/common
+ bin
+mkdirs:
+ .zsh
+ .zsh/functions
+ .emacs.d
+ .emacs.d/common

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+if [ "$1" == "write" ]; then
+  WRITE=1
+elif [ "$1" == "read" ]; then
+  READ=1
+else
+  echo "The First Argument must be read or write."
+  exit 1
+fi
+shift
+
+if [ $READ ]; then
+    if [ -n "$*" ]; then
+        files="$@"
+    else
+        files=*.ogg
+    fi
+    for i in $files
+    do
+      if [ -e "$i".comment ]; then
+	  echo SKIPPING $i
+      else
+	  echo READING $i
+	  vorbiscomment "$i" > "$i".comment
+      fi
+    done
+elif [ $WRITE ]; then
+	for i in *.ogg
+      do
+      if [ -r "$i".comment ]; then
+          echo WRITING $i
+          vorbiscomment -w "$i" < "$i".comment;
+          rm "$i".comment
+      fi
+	done
+fi

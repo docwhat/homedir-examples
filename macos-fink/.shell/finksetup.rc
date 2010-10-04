@@ -1,0 +1,6 @@
+# -*- sh -*-
+if [ -r /sw/bin/init.sh ]; then
+    # This sets up the environment for FINK
+    source /sw/bin/init.sh
+fi
+# EOF

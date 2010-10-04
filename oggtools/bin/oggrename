@@ -1,0 +1,274 @@
+#!/usr/bin/perl -w
+$| = 1;
+use strict;
+
+sub renameogg( $$$ );
+sub getogginfo( $ );
+sub errorprint( $ );
+sub debugprint ( @ );
+sub munge( $ );
+
+use Getopt::Long;
+use File::Copy;
+use File::Basename;
+use Text::Unaccent;
+
+$main::calllevel = 0;
+
+$main::lasterror = "";
+
+use vars qw( $usage
+             $debug
+             $nodo
+             $quiet
+             $verbose
+             $encoding
+           );
+$usage = 0;
+$debug = 0;
+$nodo = 0;
+$quiet = 0;
+$verbose = 0;
+$encoding = "UTF-8";
+
+if ( ! &GetOptions( "help"			=> \$usage,
+                    "debug+"		=> \$debug,
+                    "nodo"			=> \$nodo,
+                    "quiet+"		=> \$quiet,
+                    "verbose+"		=> \$verbose,
+                    "encoding"		=> \$encoding,
+                  )
+   ) {
+  $usage = 1;
+}
+
+if( $debug ) { $nodo = 1; }
+if( ! $usage ) { $usage = 0; }
+
+my @filelist = @ARGV;
+if( @filelist <= 0 ) { $usage++; }
+
+if( $usage ) {
+  print "Usage:\n";
+  print "\togglist [--help] <oggfile> ...\n";
+  print "\tRenames <oggfile> to <artist>-<title>\n";
+  print "\tconverting spaces to underbars.\n";
+  print "\t<artist>/<album> and put the file there\n";
+  exit 1;
+}
+
+
+debugprint( "List to process: @filelist" );
+
+foreach my $file ( @filelist ) {
+  debugprint( "TOP: $file" );
+  next if( $file !~ m!\.ogg$!i );
+  $main::lasterror = "";
+  my $basename = basename($file);
+  my $dirname = dirname($file);
+  my $newbasename = getogginfo( $file );
+
+  if( $newbasename eq '' ) {
+      errorprint( "Unable to rename $file: $main::lasterror" );
+      next;
+  }
+
+  renameogg( $dirname, $basename, $newbasename ) or die "Unable to rename $basename";
+}
+
+exit 0;
+
+
+
+# Functions
+
+sub renameogg( $$$ ) {
+  my ( $dir, $old, $new ) = @_;
+  debugprint( "renameogg( ",
+              quote($old),", ",
+              quote($new)," )" );
+  $main::calllevel++;
+  if( $old eq $new ) {
+      print " already done $dir/$old\n" if $verbose;
+      debugprint( "returns: ( 1 )" );
+      $main::calllevel--;
+      return 1;
+  }
+
+  my @src;
+  my @dst;
+  push @src, $old;
+  push @dst, $new;
+
+  my $return = 1;
+  opendir DIR, $dir or die "Unable to open $dir: $!";
+  my $safeold = quotemeta($old);
+  print "safeold = $safeold\n" if $debug;
+  while( my $file = readdir(DIR) ) {
+      if( $file eq "$old.comment" ) {
+          push @src, "$old.comment";
+          push @dst, "$new.comment";
+      } elsif( $file =~ m/^$safeold\.(.*)$/ ) {
+          push @src, ".$old.$1";
+          push @dst, ".$new.$1";
+      }
+  }
+  closedir DIR or die "Unable to close $dir: $!";
+
+  for( my $i = 0; $i <= $#src ; $i++ ) {
+      my $src = $src[$i];
+      my $dst = $dst[$i];
+      print " nodo:" if ! $quiet and $nodo;
+      print " '$dir' '$src' --> '$dst'\n" if ! $quiet or $debug;
+      if( ! -e "$dir/$src" ) {
+          die "ASSERTION: '$dir/src' is missing!";
+      }
+      if( -e "$dir/$dst" ) {
+          $return = 0;
+      } else {
+          debugprint( "move( \"$dir/$src\", \"$dir/$dst\" )" );
+          if( ! $nodo ) {
+              $return &= move( "$dir/$src", "$dir/$dst" );
+          }
+      }
+  }
+
+  debugprint( "returns: ( ",quote($return)," )" );
+  $main::calllevel--;
+  return $return;
+}
+
+
+sub getogginfo( $ ) {
+    my( $filename ) = @_;
+    debugprint( "getogginfo( ",
+                quote($filename)," )" );
+    $main::calllevel++;
+
+    debugprint( "FILE: $filename" );
+
+    die "No Such file: $filename" if ! -r $filename;
+    open( IN, "vorbiscomment -l -- \"$filename\"|" ) or
+        die "Unable to run vorbiscoment: $!";
+    # I don't really need album and album artist.
+    # I have thoughts for them in the future...
+    my $artist;
+    my $discnumber;
+    my $tracknumber;
+    my $title;
+    my $album;
+    my $album_artist;
+    while( <IN> ) {
+        my $line = $_;
+        chomp( $line );
+        if( $line =~ m/^title=(.*)$/i ) { $title = munge( $1 ); }
+        if( $line =~ m/^artist=(.*)$/i ) { $artist = munge( $1 ); }
+        if( $line =~ m/^tracknumber=(.*)$/i ) { 
+            $tracknumber = munge( sprintf('%02d',$1) );
+        }
+        if( $line =~ m/^discnumber=(.*)$/i ) { $discnumber = munge( $1 ); }
+        if( $line =~ m/^album=(.*)$/i ) { $album = munge( $1 ); }
+        if( $line =~ m/^album_artist=(.*)$/i ) { $album_artist = munge( $1 ); }
+    }
+    close IN;
+
+    debugprint( "discnumber:   ",quote($discnumber) );
+    debugprint( "tracknumber:  ",quote($tracknumber) );
+    debugprint( "album_artist: ",quote($album) );
+    debugprint( "artist:       ",quote($artist) );
+    debugprint( "album:        ",quote($album) );
+    debugprint( "title:        ",quote($title) );
+
+    my $newfilename;
+
+    # Sanity Checking
+    my @missing;
+    if( ! defined $title or $title eq "" ) {
+        push @missing, "title";
+    }
+    if( ! defined $artist or $artist eq "" ) {
+        push @missing, "artist";
+    }
+    
+    if( scalar(@missing) > 0 ) {
+        $newfilename = "";
+        $main::lasterror = "Missing tags: ".join(',',@missing);
+    } else {
+    if( ! defined $tracknumber or $tracknumber eq "" ) {
+	    $newfilename = $artist."-".$title.".ogg";
+    } elsif( ! defined $discnumber or $discnumber eq "" ) {
+	    $newfilename = $tracknumber."-".$artist."-".$title.".ogg";
+	} else {
+	    $newfilename = $discnumber."-".$tracknumber."-".$artist."-".$title.".ogg";
+	}
+    }
+    
+    debugprint( "returns: ( ",quote($newfilename)," )" );
+    $main::calllevel--;
+    return ( $newfilename );
+
+}
+
+sub errorprint( $ ) {
+  # Prints errors in a nice format
+  my ( $string ) = @_;
+  print " ** $string\n";
+}
+
+sub debugprint ( @ ) {
+  # Prints debug messages in a nice format
+  my ( @strings ) = @_;
+  return unless( $debug );
+
+  print STDERR "   " x ($main::calllevel + 1);
+
+  foreach my $i ( @strings ) {
+    if ( defined $i ) {
+      print STDERR "$i";
+    } else {
+      print STDERR "**UNDEF**";
+    }
+  }
+  print STDERR "\n";
+
+}
+
+sub quote ( $ ) {
+  my ( $string ) = @_;
+
+  if ( defined $string ) {
+    return "`$string'";
+  } else {
+    return "undef";
+  }
+}
+
+sub munge( $ ) {
+    my ( $string ) = @_;
+    debugprint( "munge( ",
+                quote($string)," )" );
+    $main::calllevel++;
+
+    chomp( $string );
+    my $initial_string = $string;
+
+    $string = unac_string($encoding ,$string);
+    $string =~ s/[\s:]/_/g;
+    $string =~ s/[^A-Za-z0-9.\(\)_-]//g;
+    $string =~ s/__+/__/g;
+    $string =~ s/^_+([^_])/$1/;
+    $string =~ s/([^_])_+$/$1/;
+    if( $initial_string ne "" and $string eq "" ) {
+        $string = "_";
+    }
+    
+    debugprint( "returns: ( ",quote($string)," )" );
+    $main::calllevel--;
+    
+    return $string;
+}
+
+
+# Local Variables:
+# mode: perl
+# End:

@@ -1,0 +1,17 @@
+package: emacs-template
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: emacs-base
+standards-version: 1
+description: File templates when opening empty files
+  http://emacs-template.sourceforge.net/
+
+dirs:
+ .emacs.d
+ .emacs.d/emacs
+ .emacs.d/templates
+
+mkdirs:
+ .emacs.d
+ .emacs.d/emacs
+ 

@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# To enable this hook, rename this file to "pre-commit".
+
+set -eu
+
+if git-rev-parse --verify HEAD > /dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+
+# This checks for whitespace problems.
+git diff-index --check --cached $against --
+
+# This checks for narfs
+if git diff --cached $against -- | grep -qiE '^\+.*narf'; then
+    # A narf was found
+    git diff --cached $against -- | grep -C3 -iE '(^diff|^\+.*narf).*'
+    #git grep --cached -i narf --
+    exit 1
+fi
+
+# EOF

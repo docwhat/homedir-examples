@@ -1,0 +1,62 @@
+###
+### This is the prompt stuff
+unset COMMAND_PROMPT
+
+function my_prompt {
+local  BRIGHT_BLACK="\[\e[1;30m\]"
+local    BRIGHT_RED="\[\e[1;31m\]"
+local  BRIGHT_GREEN="\[\e[1;32m\]"
+local BRIGHT_YELLOW="\[\e[1;33m\]"
+local   BRIGHT_BLUE="\[\e[1;34m\]"
+local BRIGHT_PURPLE="\[\e[1;35m\]"
+local   BRIGHT_CYAN="\[\e[1;36m\]"
+local  BRIGHT_WHITE="\[\e[1;37m\]"
+local    DARK_BLACK="\[\e[0;30m\]"
+local      DARK_RED="\[\e[0;31m\]"
+local    DARK_GREEN="\[\e[0;32m\]"
+local   DARK_YELLOW="\[\e[0;33m\]"
+local     DARK_BLUE="\[\e[0;34m\]"
+local   DARK_PURPLE="\[\e[0;35m\]"
+local     DARK_CYAN="\[\e[0;36m\]"
+local    DARK_WHITE="\[\e[0;37m\]"
+local     NO_COLOR="\[\e[0m\]"
+
+if [ "$EUID" = "0" ]; then
+    local   MAIN_COLOR=$BRIGHT_RED
+else
+    local   MAIN_COLOR=$BRIGHT_BLUE
+fi
+local   USER_HOST_COLOR=$BRIGHT_YELLOW
+local   PATH_COLOR=$DARK_GREEN
+local   JOB_COLOR=$DARK_YELLOW
+
+case $TERM in
+    xterm*|rxvt*)
+        TITLEBAR='\[\e]0;\u@\h: \w\007\]'
+        ;;
+    *)
+        TITLEBAR=""
+        ;;
+esac
+
+if tput setaf 1 >&/dev/null; then
+    # We have color support; assume it's compliant with Ecma-48
+    # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+    # a case would tend to support setf rather than setaf.)
+    PS1="${TITLEBAR}\
+${MAIN_COLOR}--(\
+${USER_HOST_COLOR}\u@\h${MAIN_COLOR}:${JOB_COLOR}\j${MAIN_COLOR}:${PATH_COLOR}\w\
+${MAIN_COLOR})--\
+${NO_COLOR} "
+    PS2="${MAIN_COLOR}-->${NO_COLOR} "
+else
+    # Black and white
+    PS1="--(\u@\h:\j:\W)-- "
+    PS2="--> "
+fi
+
+### End prompt stuff
+}
+
+# Execute and remove it from memory
+my_prompt ; unset my_prompt

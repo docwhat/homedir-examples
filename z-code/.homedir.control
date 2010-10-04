@@ -1,0 +1,10 @@
+package: z-code
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+standards-version: 1
+description: Z-Code helpful things
+
+dirs:
+ bin
+mkdirs:
+ bin

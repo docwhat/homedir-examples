@@ -1,0 +1,18 @@
+# -*- sh -*-
+
+### History Settings ###
+alias rehist='fc -Ri'
+setopt    append_history                # Appends history to save file on exit
+setopt    bang_hist	                    # History expansion using '!'
+setopt    extended_history	            # Puts start/stop timestamps in file
+setopt    hist_allow_clobber            # Add | to output redirects in history
+setopt    hist_beep                     # Beep for history errors
+setopt    hist_ignore_dups              # Ignore repeated commands
+setopt NO_hist_no_store                 # Remove the history after invoking it
+setopt    hist_verify                   # Put history expansion in command line
+setopt    hist_expire_dups_first        # For trimming, remove dups first
+setopt    hist_ignore_all_dups          # Removes old dup in favor of new one
+setopt NO_hist_save_no_dups             # older dups removed from save file
+setopt    inc_append_history            # Add history items continuously
+
+#EOF

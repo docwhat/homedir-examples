@@ -1,0 +1,7 @@
+package: screen
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+standards-version: 1
+description: Basic screen configuration
+dirs:
+ .shell

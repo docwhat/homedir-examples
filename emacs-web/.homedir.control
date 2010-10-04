@@ -1,0 +1,14 @@
+package: emacs-web
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: emacs-base
+standards-version: 1
+description: Emacs packages for web editing.
+  Note: This requires nxml on the system and Emacs 22 or greater.
+  Includes: nxhtml and rails-reloaded
+
+dirs:
+ .emacs.d
+ .emacs.d/common
+ .emacs.d/rails-reloaded
+ .emacs.d/nxhtml

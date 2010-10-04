@@ -1,0 +1,23 @@
+package: emacs-base
+priority: normal
+maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+depends: 
+standards-version: 1
+description: Emacs base package
+ubuntu-packages: emacs css-mode nxml-mode psgml
+
+dirs:
+ bin
+ .emacs.d
+ .emacs.d/common
+ .emacs.d/emacs
+ .emacs.d/xemacs
+ .emacs.d/aquamacs
+
+mkdirs:
+ .emacs.d
+ .emacs.d/common
+ .emacs.d/emacs
+ .emacs.d/xemacs
+ .emacs.d/aquamacs
+ 
