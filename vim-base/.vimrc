@@ -136,8 +136,8 @@ iabbrev Ypobox Christian Höltje<C-M>P.O. Box 81062<C-M>Pittsburgh, PA 15217-1610
 iabbrev Yaddr Christian Höltje<C-M>5882 Shady Forbes Ter<C-M>Pittsburgh, PA 15217-1610
 iabbrev Yphone PHONE (412) 422-1868
 iabbrev Ycell PHONE (412) 513-8439
-iabbrev Yresume My resume is available online at:<C-M>http://docwhat.gerf.org/resume.php
-iabbrev Yref    My references are available online at:<C-M>http://docwhat.gerf.org/references.php<C-M>Login: <your email address><C-M>Password: ref<C-M>This page works for all email addresses at your company.
+iabbrev Yresume My resume is available online at:<C-M>http://docwhat.org/resume.php
+iabbrev Yref    My references are available online at:<C-M>http://docwhat.org/references.php<C-M>Login: <your email address><C-M>Password: ref<C-M>This page works for all email addresses at your company.
 
 iabbrev alos also
 iabbrev aslo also

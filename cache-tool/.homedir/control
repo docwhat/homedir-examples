@@ -1,6 +1,6 @@
 package: cache-tool
 priority: critical
-maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+maintainer: Christian Höltje <docwhat@gerf.org>
 depends: 
 standards-version: 1
 description: Cache-Tool base package.

@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# Copyright 2000 Christian Holtje <docwhat@gerf.org>
+# Copyright 2000 Christian Höltje <docwhat@gerf.org>
 # $Id: mutt.dynamic,v 2.13 2004/08/10 00:21:21 docwhat Exp $
 $| = 1;
 use strict;

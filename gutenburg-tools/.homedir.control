@@ -1,6 +1,6 @@
 package: gutenburg-tools
 priority: normal
-maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+maintainer: Christian Höltje <docwhat@gerf.org>
 standards-version: 1
 description: Simple gutenburg-tools
 

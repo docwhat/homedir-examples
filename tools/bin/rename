@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 # $Id: rename,v 1.4 2001/07/25 15:56:15 docwhat Exp $
 #
-# This version is maintained by Christian Holtje <docwhat@gerf.org>
+# This version is maintained by Christian Höltje <docwhat@gerf.org>
 # 
 # This is based on Larry's filename fixer script distributed 
 # with perl as 'eg/rename' in the source.
@@ -212,7 +212,7 @@ Original version by Larry Wall ( http://www.wall.org/~lwall/ ) and included
 with the perl source as 'eg/rename'.
 
 This version is by Christian H�ltje <docwhat@gerf.org>
-( http://docwhat.gerf.org/ )
+( http://docwhat.org/ )
 
 Additional ideas and code taken from Robin Barker's (Robin.Barker@npl.co.uk)
 version of this script.  I also swiped the POD documentation as a starting
@@ -241,6 +241,6 @@ so had to be used with care.
 I hope I've fixed that (Robin Barker).
 
 Earlier versions couldn't rename (move) files across filesystems.
-This should be fixed (Christian Holtje).
+This should be fixed (Christian Höltje).
 
 =cut

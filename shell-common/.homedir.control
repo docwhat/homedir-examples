@@ -1,6 +1,6 @@
 package: shell-common
 priority: normal
-maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+maintainer: Christian Höltje <docwhat@gerf.org>
 depends: 
 standards-version: 1
 description: Common Shell Framework

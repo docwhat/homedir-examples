@@ -1,6 +1,6 @@
 package: emacs-js
 priority: normal
-maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+maintainer: Christian Höltje <docwhat@gerf.org>
 depends: emacs-base
 standards-version: 1
 description: Javascript mode from X-Emacs

@@ -1,6 +1,6 @@
 package: mercurial-support
 priority: normal
-maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+maintainer: Christian Höltje <docwhat@gerf.org>
 depends: 
 standards-version: 1
 description: Mercurial Support files for zsh and emacs.

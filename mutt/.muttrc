@@ -200,7 +200,7 @@ hdr_order	From Newsgroups: From: Reply-To: To: Cc: Subject: \
 #  send-hook [!]<pattern> <command>
 #
 # <command> is executed when sending mail to an address matching <pattern>
-#send-hook '~t ^[^@]+@tandem.com$' 'my_hdr From: Christian Holtje <Christian.Holtje@Tandem.Com>'
+#send-hook '~t ^[^@]+@tandem.com$' 'my_hdr From: Christian Höltje <Christian.Höltje@Tandem.Com>'
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

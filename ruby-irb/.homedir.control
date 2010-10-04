@@ -1,6 +1,6 @@
 package: ruby-irb
 priority: normal
-maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+maintainer: Christian Höltje <docwhat@gerf.org>
 depends: shell-common
 standards-version: 1
 description: Handy configuration to make command line ruby (aka IRB) easier.

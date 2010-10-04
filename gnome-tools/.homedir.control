@@ -1,6 +1,6 @@
 package: gnome-tools
 priority: normal
-maintainer: Christian Holtje <bugs.homedir@docwhat.gerf.org>
+maintainer: Christian Höltje <docwhat@gerf.org>
 standards-version: 1
 description: Nifty tools and tricks for gnome
 
