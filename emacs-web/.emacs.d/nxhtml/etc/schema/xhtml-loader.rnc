@@ -1,1 +1,1 @@
-include "../../../../../../Applications/Aquamacs Emacs.app/Contents/Resources/site-lisp/edit-modes/nxml/schema/xhtml.rnc"
+include "../../../../../../Applications/Emacs.app/Contents/Resources/etc/schema/xhtml.rnc"
