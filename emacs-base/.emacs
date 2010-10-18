@@ -7,6 +7,7 @@
 ;; Turn on debugging for this file
 (setq debug-on-error t)
 
+(load-library "~/.emacs.d/byte-code-cache")
 (load-library "~/.emacs.d/elisp-load-dir")
 
 (if (not (featurep 'aquamacs))
