@@ -1,0 +1,14 @@
+package: emacs-php
+priority: normal
+maintainer: Jon Daniel <binarycleric@gmail.com>
+depends: emacs-base
+standards-version: 1
+description: Emacs configuration for php development
+
+dirs:
+ bin
+ .emacs.d
+ .emacs.d/common
+
+mkdirs:
+ .emacs.d
