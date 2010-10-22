@@ -10,5 +10,4 @@ description: Emacs packages for web editing.
 dirs:
  .emacs.d
  .emacs.d/common
- .emacs.d/rails-reloaded
  .emacs.d/nxhtml

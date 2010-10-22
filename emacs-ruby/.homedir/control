@@ -17,6 +17,7 @@ dirs:
  bin
  .emacs.d
  .emacs.d/common
+ .emacs.d/rails-reloaded
 
 mkdirs:
  .emacs.d
