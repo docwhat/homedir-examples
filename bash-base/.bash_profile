@@ -12,7 +12,7 @@ done
 unset envfile
 
 # Only run if shell is interactive.
-if [[ $- != *i* ]] ; then
+if [[ $- = *i* ]] ; then
     # If bash_completion exists, use it..
     if [[ -r /etc/bash_completion ]] && ! shopt -oq posix; then
         . /etc/bash_completion
