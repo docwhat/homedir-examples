@@ -1,0 +1,9 @@
+package: tmux
+priority: normal
+maintainer: Christian Höltje <docwhat@gerf.org>
+depends: 
+standards-version: 1
+description: tmux configuration files
+ tmux is a terminal multiplexer, similar to screen.
+ .
+ This configuration is similar to the screen configuration.
