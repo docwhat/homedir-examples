@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -eu
+
+function _run {
+
+local session="${1:-main}"
+
+if tmux has-session -t "${session}" 2> /dev/null; then
+    echo -n "[attaching '${session}']"
+    exec tmux -u attach -t "${session}"
+else
+    echo -n "[starting '${session}']"
+    exec tmux -u new-session -s "${session}"
+fi
+
+}
+
+_run "$@"
+
+echo "Something has gone wrong."
+
+exit 11
