@@ -50,7 +50,7 @@ function prompt_docwhat_precmd {
 
 #  set the tab window title (%t) for screen
 function set_screen_tab () {
-    if [[ "$TERM" == "screen" ]]; then
+    if [[ "$TERM" == "screen" && -z "${TMUX}" ]]; then
         setopt local_options
         local TEXT="${1}"
         if [[ "${2}" == "true" ]]; then
