@@ -7,8 +7,17 @@
 ;; Turn on debugging for this file
 (setq debug-on-error t)
 
-(setq bcc-cache-directory (concat "~/.emacs.d/byte-cache/" (emacs-version)))
-(load-library "~/.emacs.d/byte-code-cache")
+;; function to check emacs versions.
+(defun running-emacs-version-or-newer (major minor)
+  (or (> emacs-major-version major)
+      (and (= emacs-major-version major)
+	   (>= emacs-minor-version minor))))
+
+(if (running-emacs-version-or-newer 22 0)
+    (progn
+      (setq bcc-cache-directory (concat "~/.emacs.d/byte-cache/" (downcase (system-name)) "/" (emacs-version)))
+      (load-library "~/.emacs.d/byte-code-cache")
+      ))
 
 (load-library "~/.emacs.d/elisp-load-dir")
 
