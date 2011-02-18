@@ -7,17 +7,17 @@
 ;; Turn on debugging for this file
 (setq debug-on-error t)
 
-;; Byte Compiler Warnings...
-;; for development:
-;;(setq byte-compile-warnings (list 'free-args 'unresolved 'callargs 'redefine 'obsolete))
-;; for users:
-(setq byte-compile-warnings (list 'unresolved 'redefine 'obsolete))
+;;; Byte Compiler Warnings...
+;;; for development:
+;;;(setq byte-compile-warnings (list 'free-args 'unresolved 'callargs 'redefine 'obsolete))
+;;; for users:
+;(setq byte-compile-warnings (list 'unresolved 'redefine 'obsolete))
 
 ;; function to check emacs versions.
 (defun running-emacs-version-or-newer (major minor)
   (or (> emacs-major-version major)
       (and (= emacs-major-version major)
-	   (>= emacs-minor-version minor))))
+           (>= emacs-minor-version minor))))
 
 (if (running-emacs-version-or-newer 22 0)
     (progn
@@ -36,11 +36,18 @@
                          (int-to-string emacs-major-version))))
           (load-file custom-file))
 
+      ;; Load the common lisp
       (message "Loading common .el files")
       (add-to-list 'load-path (expand-file-name "~/.emacs.d/common"))
-
-      ;; Load the common lisp
       (elisp-load-dir "~/.emacs.d/common")
+
+      ;; Load the common lisp for emacs 22+
+      (if (running-emacs-version-or-newer 22 0)
+          (progn
+            (message "Loading common22 .el files")
+            (add-to-list 'load-path (expand-file-name "~/.emacs.d/common"))
+            (elisp-load-dir "~/.emacs.d/common")
+            ))
 
       ;; Load the Emacs or XEmacs specific lisp
       (if (featurep 'xemacs)

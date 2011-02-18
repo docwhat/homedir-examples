@@ -10,6 +10,7 @@ dirs:
  bin
  .emacs.d
  .emacs.d/common
+ .emacs.d/common22
  .emacs.d/emacs
  .emacs.d/xemacs
  .emacs.d/aquamacs
@@ -17,6 +18,7 @@ dirs:
 mkdirs:
  .emacs.d
  .emacs.d/common
+ .emacs.d/common22
  .emacs.d/emacs
  .emacs.d/xemacs
  .emacs.d/aquamacs

@@ -49,6 +49,8 @@ bind "^x"
 # Insert the date
 bind D exec .!. zsh -c 'print -Pn %D{%F}'
 
+altscreen on
+
 # Put your local overrides in this file.
 source $HOME/.screenrc.local
 
