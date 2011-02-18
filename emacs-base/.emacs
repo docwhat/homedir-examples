@@ -7,6 +7,12 @@
 ;; Turn on debugging for this file
 (setq debug-on-error t)
 
+;; Byte Compiler Warnings...
+;; for development:
+;;(setq byte-compile-warnings (list 'free-args 'unresolved 'callargs 'redefine 'obsolete))
+;; for users:
+(setq byte-compile-warnings (list 'unresolved 'redefine 'obsolete))
+
 ;; function to check emacs versions.
 (defun running-emacs-version-or-newer (major minor)
   (or (> emacs-major-version major)
