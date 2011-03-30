@@ -74,6 +74,66 @@ prompt_docwhat_preexec () {
     set_screen_tab "${1[(wr)^(*=*|sudo|ssh|exec|nice|-*)]}" true
 }
 
+##
+# Turn on and off Special Graphical Characters
+function prompt_docwhat_specialchars {
+    local use_special="${1:-no}"
+    if [[ "${use_special:-}" = y* ]]; then
+        typeset -A altchar
+        set -A altchar ${(s..)terminfo[acsc]}
+        PR_SET_CHARSET="%{$terminfo[enacs]%}"
+        PR_SHIFT_IN="%{$terminfo[smacs]%}"
+        PR_SHIFT_OUT="%{$terminfo[rmacs]%}"
+        PR_HBAR=${altchar[q]:--}
+        PR_ULCORNER=${altchar[l]:--}
+        PR_LLCORNER=${altchar[m]:--}
+        PR_URCORNER=${altchar[k]:--}
+        PR_LRCORNER=${altchar[j]:--}
+    else
+        PR_SET_CHARSET=""
+        PR_SHIFT_IN=""
+        PR_SHIFT_OUT=""
+        PR_HBAR="-"
+        PR_ULCORNER="/"
+        PR_LLCORNER="\\"
+        PR_URCORNER="\\"
+        PR_LRCORNER="/"
+    fi
+}
+
+function prompt_docwhat_colors {
+    local use_color="${1:-no}"
+
+    if [[ "${use_color}" = y* ]]; then
+	autoload colors zsh/terminfo
+	for color in RED GREEN YELLOW BLUE MAGENTA CYAN WHITE BLACK; do
+            eval PR_LIGHT_$color='%{$fg_bold[${(L)color}]%}'
+            eval PR_$color='%{$fg_no_bold[${(L)color}]%}'
+	done
+	PR_NO_COLOR="%{$reset_color%}"
+
+	PR_MAIN_COLOR="${PR_BLUE}"
+	PR_SECOND_COLOR="${PR_LIGHT_GREEN}"
+    else
+	print -Pn "${PR_NO_COLOR:-}"
+	for color in RED GREEN YELLOW BLUE MAGENTA CYAN WHITE BLACK; do
+            eval PR_LIGHT_$color=''
+            eval PR_$color=''
+	done
+	PR_NO_COLOR=''
+	PR_MAIN_COLOR=''
+	PR_SECOND_COLOR=''
+    fi
+
+    ###
+    # Are we connected remotely via SSH?
+    if [[ -n "$SSH_CLIENT" ]]; then
+        PR_HOSTCOLOR="${PR_LIGHT_GREEN}"
+    else
+        PR_HOSTCOLOR="${PR_YELLOW}"
+    fi
+}
+
 prompt_docwhat_setup () {
     ###
     # Decide if we need to set titlebar text.
@@ -91,58 +151,23 @@ prompt_docwhat_setup () {
 
     ###
     # See if we can use colors.
-    autoload colors zsh/terminfo
     if [[ (-n "$terminfo[colors]" && "$terminfo[colors]" -ge 8) || "$(tput colors 2> /dev/null || :)" -ge 8 ]]; then
-        for color in RED GREEN YELLOW BLUE MAGENTA CYAN WHITE BLACK; do
-                eval PR_LIGHT_$color='%{$fg_bold[${(L)color}]%}'
-                eval PR_$color='%{$fg_no_bold[${(L)color}]%}'
-        done
-        PR_NO_COLOR="%{$reset_color%}"
-
-        PR_MAIN_COLOR="${PR_BLUE}"
-        PR_SECOND_COLOR="${PR_LIGHT_GREEN}"
+	prompt_docwhat_colors yes
     fi
+
     #####################
     # Special characters?
     if [[ -z "$terminfo" ]]; then
-        PR_USE_SPECIALCHARS='no'
+	prompt_docwhat_specialchars no
     else
-        PR_USE_SPECIALCHARS='yes'
+	prompt_docwhat_specialchars yes
     fi
 
-    ###
-    # Are we connected remotely via SSH?
-    if [[ -n "$SSH_CLIENT" ]]; then
-        PR_HOSTCOLOR="${PR_LIGHT_GREEN}"
-    else
-        PR_HOSTCOLOR="${PR_YELLOW}"
-    fi
-
-    ###
-    # Special Graphical Characters
-    if [[ "$PR_USE_SPECIALCHARS" = "yes" ]]; then
-        typeset -A altchar
-        set -A altchar ${(s..)terminfo[acsc]}
-        PR_SET_CHARSET="%{$terminfo[enacs]%}"
-        PR_SHIFT_IN="%{$terminfo[smacs]%}"
-        PR_SHIFT_OUT="%{$terminfo[rmacs]%}"
-        PR_HBAR=${altchar[q]:--}
-        PR_ULCORNER=${altchar[l]:--}
-        PR_LLCORNER=${altchar[m]:--}
-        PR_URCORNER=${altchar[k]:--}
-        PR_LRCORNER=${altchar[j]:--}
-    else
-        PR_HBAR="-"
-        PR_ULCORNER="/"
-        PR_LLCORNER="\\"
-        PR_URCORNER="\\"
-        PR_LRCORNER="/"
-    fi
     unset PR_USE_SPECIALCHARS
 
     ###
     # Decide whether to set a screen title
-    if [[ "$TERM" == "screen" ]]; then
+    if [[ "$TERM" == "screen"  && -z "${TMUX}" ]]; then
         PR_STITLE=$(set_screen_tab "${ZSH_NAME}" true)
     else
         PR_STITLE=''
