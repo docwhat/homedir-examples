@@ -2,23 +2,58 @@
 
 set -eu
 
-function _run {
+function connect {
+    set -eu
 
     local session="${1:-main}"
-    cd "$HOME"
+    cd "${start_dir}"
 
     if tmux has-session -t "${session}" 2> /dev/null; then
-	echo -n "[attaching '${session}']"
-	exec tmux -u attach -t "${session}"
+        echo -n "[attaching '${session}']"
+        exec tmux -u attach -t "${session}"
     else
-	echo -n "[starting '${session}']"
-	exec tmux -u new-session -s "${session}"
+        echo -n "[starting '${session}']"
+        exec tmux -u new-session -s "${session}"
     fi
 
 }
 
-_run "$@"
+function list {
+    echo "Sessions:"
+    tmux list-sessions
+    exit 0
+}
+
+function help {
+    cat <<EOF
+Usage: $0 [options] <session>
+
+  -d --directory DIR  Start tmux in this directory.
+  -l --list           List all sessions.
+  -h --help           You're soaking in it.
+EOF
+    exit 0
+}
+
+mode="connect"
+typeset -a args
+typeset start_dir="${HOME}"
+args=(   )
+while (( "${#*}" > 0 )); do
+    case "${1}" in
+        --list|-l) mode="list" ;;
+        --help|-h) mode="help" ;;
+        --dir*|-d) shift; start_dir="${1}" ;;
+        *) args[${#args[*]}]="${1}";;
+    esac
+    shift
+done
+
+case "${mode}" in
+    list) list ;;
+    help) help ;;
+    connect) set +u ; connect "${args[@]}" ;;
+esac
 
 echo "Something has gone wrong."
-
 exit 11
