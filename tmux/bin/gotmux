@@ -8,7 +8,7 @@ function connect {
     local session="${1:-main}"
     cd "${start_dir}"
 
-    if tmux has-session -t "${session}" 2> /dev/null; then
+    if tmux has-session -t "${session}"; then
         echo -n "[attaching '${session}']"
         exec tmux -u attach -t "${session}"
     else
