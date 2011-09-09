@@ -1,0 +1,5 @@
+package: ack
+priority: normal
+maintainer: Jon Daniel <binarycleric@gmail.com>
+standards-version: 1
+description: Ack config that adds some templating extensions
