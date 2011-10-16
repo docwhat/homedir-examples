@@ -2,26 +2,61 @@
 
 set -eu
 
+# Finds a matching work or project directory.
 function connect {
-    set -eu
-
-    local session="${1:-main}"
-    cd "${start_dir}"
-
-    if tmux has-session -t "${session}"; then
-        echo -n "[attaching '${session}']"
-        exec tmux -u attach -t "${session}"
-    else
-        echo -n "[starting '${session}']"
-        exec tmux -u new-session -s "${session}"
+  local session="${1:-}"
+  if [[ -n "${session}" && -z "${start_dir}" ]]; then
+    start_dir=$(find ~/work ~/projects ~/git -maxdepth 2 -type d -iregex ".*/${session}/.git" | head -n 1)
+    if [[ -n "${start_dir}" ]]; then
+      start_dir=$(dirname "${start_dir}")
     fi
+  fi
+  if [[ -z "${session}" ]]; then
+    session=main
+  fi
+  if [[ -z "${start_dir}" ]]; then
+    start_dir="${HOME}"
+  else
+    echo "starting in ${start_dir}..."
+  fi
+
+  simple_connect "${session}"
+}
+
+function simple_connect {
+  set -eu
+
+  local session="${1:-main}"
+  [[ -n "${start_dir}" ]] && cd "${start_dir}"
+
+  if tmux has-session -t "${session}"; then
+    echo -n "[attaching '${session}']"
+    exec tmux -u attach -t "${session}"
+  else
+    echo -n "[starting '${session}']"
+    exec tmux -u new-session -s "${session}"
+  fi
 
 }
 
 function list {
+  if [[ $show_headers = true ]]; then
     echo "Sessions:"
     tmux list-sessions
-    exit 0
+  else
+    tmux list-sessions | sed 's/:.*//g'
+  fi
+  exit 0
+}
+
+function projects {
+  [[ $show_headers = true ]] && echo "Projects:"
+  local pdir
+  find ~/work ~/projects ~/git -maxdepth 2 -type d -name '.git' | while read pdir; do
+    local name=$(basename $(dirname "${pdir}"))
+    echo "${name}"
+  done | sort -u
+  exit 0
 }
 
 function help {
@@ -30,29 +65,34 @@ Usage: $0 [options] <session>
 
   -d --directory DIR  Start tmux in this directory.
   -l --list           List all sessions.
+  -p --projects       List all known projects.
   -h --help           You're soaking in it.
 EOF
-    exit 0
+  exit 0
 }
 
 mode="connect"
 typeset -a args
-typeset start_dir="${HOME}"
+typeset start_dir=""
+typeset show_headers=true
 args=(   )
 while (( "${#*}" > 0 )); do
-    case "${1}" in
-        --list|-l) mode="list" ;;
-        --help|-h) mode="help" ;;
-        --dir*|-d) shift; start_dir="${1}" ;;
-        *) args[${#args[*]}]="${1}";;
-    esac
-    shift
+  case "${1}" in
+    --list|-l) mode="list" ;;
+    --projects|-p) mode="projects" ;;
+    --help|-h) mode="help" ;;
+    --no-headers|-s) show_headers=false ;;
+    --dir*|-d) shift; start_dir="${1}" ;;
+    *) args+="${1}";;
+  esac
+  shift
 done
 
 case "${mode}" in
-    list) list ;;
-    help) help ;;
-    connect) set +u ; connect "${args[@]}" ;;
+  list) list ;;
+  help) help ;;
+  projects) projects ;;
+  connect) set +u ; connect "${args[@]}" ;;
 esac
 
 echo "Something has gone wrong."
