@@ -9,3 +9,5 @@ description: tmux configuration files
  This configuration is similar to the screen configuration.
 dirs:
  bin
+ .zsh
+ .zsh/functions
