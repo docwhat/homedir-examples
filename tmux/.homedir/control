@@ -11,3 +11,4 @@ dirs:
  bin
  .zsh
  .zsh/functions
+ .shell
