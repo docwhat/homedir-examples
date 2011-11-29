@@ -1,0 +1,10 @@
+
+function fixssh {
+  if [[ -n "${TMUX}" ]]; then
+    echo "Fixing SSH variables..."
+    local new_sock=$( tmux showenv | grep ^SSH_AUTH_SOCK | cut -d = -f 2)
+    if [[ -n "${new_sock}" && -S "${new_sock}" ]]; then
+      SSH_AUTH_SOCK="${new_sock}"
+    fi
+  fi
+}
