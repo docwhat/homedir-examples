@@ -9,4 +9,5 @@
 --type-set=sass=.sass
 --type-set=scss=.scss
 --type-set=erb=.erb
+--type-set=puppet=.pp
 --type-set=coffee=.coffee
